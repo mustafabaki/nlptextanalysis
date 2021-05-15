@@ -17,14 +17,14 @@
           <span class="navbar-toggler-icon"></span>
         </button>
       
-        
+      
       </nav>
     
       <form action="{{url_for('test')}}" method="POST" enctype=multipart/form-data>
         <div class="form-group">
           <label for="file1">Please choose the file to be analyzed</label>
           <input type="file" class="form-control-file" id="file1" name="file1"> <br>
-          <label for="file2">Please choose your dataset</label><br>
+          <label for="file2">Please choose your dataset</label> <span title="Uploading dataset is optional. You can analyze your text without uploading a dataset if you choose Naive Bayes algorithm.">&#x1F6C8</span> <br>
           <input type="file" id="file2" name="file2"><br>
 <br>
           <select name="language" id="languageid">
@@ -32,6 +32,17 @@
             <option value="english"> English</option>
             <option value="turkish">Turkish</option>
           </select><br>
+
+          <br>
+          
+          <select name="algorithm" id="algorithmid">
+            <option value="null">Please choose an algorithm</option>
+            <option value="naivebayes">Naive Bayes Algorithm </option>
+            <option value="lda">LDA Algorithm</option>
+            <option value="lsa">LSA Algorithm</option>
+          </select><br>
+
+
           <button type="submit">Submit</button>
         </div>
       </form>

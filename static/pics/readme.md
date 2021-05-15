@@ -1,0 +1,1 @@
+This folder will contain the pictures of the output of WordCloud.

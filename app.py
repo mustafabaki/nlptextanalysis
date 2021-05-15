@@ -20,6 +20,7 @@ def index():
 @app.route('/', methods =['POST'])
 def test():
     language = request.form['language']
+    algorithm = request.form['algorithm']
     f = request.files["file1"]
   
     f.save(os.path.join("uploads",f.filename))
@@ -31,7 +32,7 @@ def test():
     outname = f.filename+"_out.png"
     pic1 = os.path.join(app.config['UPLOAD_FOLDER'], outname)
      
-    if language == 'english':
+    if language == 'english' and algorithm == 'naivebayes':
         file1 = open("uploads/"+f.filename, 'r', encoding='utf-8')
         text = file1.read()
         sentences = nltk.tokenize.sent_tokenize(text)
