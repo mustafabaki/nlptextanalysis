@@ -58,6 +58,28 @@
               <p style="font-weight: bold; font-style: italic; font-family: calibri;">The dominant topic is your text file is : {{ dominant }} </p>
             </center>
         {% endif %}
+
+        {% if algorithm == 'lda' %}
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Topic Number</th>
+              <th scope="col">Vocabulary of The Topic</th>
+              <th scope="col">Accuracy score</th>
+            </tr>
+          </thead>
+            <tbody>
+                {% for result in tpcs %}
+                
+                <tr>
+                  <th scope="row">{{ loop.index }}</th>
+                  <td>{{ result.score }}</td>
+                  <td>{{ result.topic }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+        {% endif %}
     </div>
       
 

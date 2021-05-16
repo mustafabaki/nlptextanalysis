@@ -4,6 +4,7 @@ import os
 import word_cloud
 import naivebayes
 import nltk 
+import lda_70
 
 
 app = Flask(__name__)
@@ -31,10 +32,10 @@ def test():
 
     outname = f.filename+"_out.png"
     pic1 = os.path.join(app.config['UPLOAD_FOLDER'], outname)
-     
+    file1 = open("uploads/"+f.filename, 'r', encoding='utf-8')
+    text = file1.read()
     if language == 'english' and algorithm == 'naivebayes':
-        file1 = open("uploads/"+f.filename, 'r', encoding='utf-8')
-        text = file1.read()
+       
         sentences = nltk.tokenize.sent_tokenize(text)
         topics =[]
         dominant_topic = naivebayes.predict_category(text)
@@ -43,10 +44,12 @@ def test():
 
         topics = set(topics)
         return render_template("resultpage.html", img_file =pic1, algorithm = 'naivebayes', tpcs = topics, dominant = dominant_topic)
-    elif language == 'turkish':
-         #  code here
+    elif language == 'turkish' and algorithm == 'lda':
 
-        return ""
+        results = lda_70.lda70(text)
+
+
+        return render_template("resultpage.html", img_file = pic1, algorithm = "lda", tpcs = results)
         
 
 @app.route('/', methods =['POST'])
