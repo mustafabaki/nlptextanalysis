@@ -174,10 +174,3 @@ bow_vector = dictionary.doc2bow(preprocess(unseen_sentence))
 for index, score in sorted(lda_model[bow_vector], key=lambda tup: -1*tup[1]):
     if(score>0.1):
       print("Score: {}\t Topic: {}".format(score, lda_model.print_topic(index, 100)))
-
-# Data preprocessing step for the unseen document
-bow_vector = dictionary.doc2bow(preprocess(unseen_sentence))
-
-for index, score in sorted(lda_model[bow_vector], key=lambda tup: -1*tup[1]):
-    if(score>0.1):
-      print("Score: {}\t Topic: {}".format(score, lda_model.print_topic(index, 100)))
