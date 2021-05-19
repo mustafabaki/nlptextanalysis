@@ -1,0 +1,6 @@
+link: https://drive.google.com/file/d/1--XEuC3nGtturbWfNxfLgSLYTnaBdW-D/view?usp=sharing
+
+this dataset includes several articles data. All text made lowercase, removed text in square brackets, removed punctuation and words containing numbers.
+Total article : 50000
+
+it is ready to use
