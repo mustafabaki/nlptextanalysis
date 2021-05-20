@@ -5,6 +5,7 @@ import word_cloud
 import naivebayes
 import nltk 
 import lda_70
+import nmf_ready_to_use
 
 
 app = Flask(__name__)
@@ -50,6 +51,10 @@ def test():
 
 
         return render_template("resultpage.html", img_file = pic1, algorithm = "lda", tpcs = results)
+    
+    elif language == 'english' and algorithm == 'nmf':
+        results = nmf_ready_to_use.nmf_algorithm(text)
+        return render_template("resultpage.html",img_file =pic1, algorithm = "nmf", tpcs = results)
         
 
 @app.route('/', methods =['POST'])
