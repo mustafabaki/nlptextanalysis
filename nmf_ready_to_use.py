@@ -7,9 +7,43 @@ Original file is located at
     https://colab.research.google.com/drive/1OwSYcDVUm-QI9Euat9O00KtHst_QL_v1
 """
 
-import dill
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
+from sklearn.decomposition import NMF
+import pandas as pd
+import joblib
+pd.set_option('display.max_columns', None)  
+pd.set_option('display.max_colwidth', None)
+#import data
+df = pd.read_csv('NMF_clean_data.csv')
 
-dill.load_session("saved.db")
+content = df['0']
+
+
+import joblib
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
+nmf = joblib.load('finalized_model.sav')
+
+# clean the data
+#!python -m spacy download en_core_web_sm #run just ones to install en_core_web_sm, if you don't have it
+import spacy
+import re
+import string
+def clean_text(text):
+    '''Make text lowercase, remove text in square brackets, remove punctuation and remove words containing numbers.'''
+    text = text.lower()
+    text = re.sub(r'\[.*?\]', '', text)
+    text = re.sub(r'[%s]' % re.escape(string.punctuation), '', text)
+    text = re.sub(r'\w*\d\w*', '', text)
+    return text
+
+nlp = spacy.load("en_core_web_sm")
+def lemmatizer(text):        
+    sent = []
+    doc = nlp(text)
+    for word in doc:
+        sent.append(word.lemma_)
+    return " ".join(sent)
+
 
 # To display words with desc. order 
 def display_topics(model, feature_names, no_top_words):
@@ -20,6 +54,13 @@ def display_topics(model, feature_names, no_top_words):
         
 no_top_words = 10
 #display_topics(nmf, tfidf_feature_names, no_top_words)
+# NMF is able to use tf-idf
+tfidf_vectorizer = TfidfVectorizer(max_df=0.95, min_df=2, max_features=1000, stop_words='english')
+# tfidf = tfidf_vectorizer.fit_transform(df_clean)
+tfidf = tfidf_vectorizer.fit_transform(content)
+tfidf_feature_names = joblib.load('tfidf_feature_names.sav')
+
+import pandas as pd
 
 #Sample 
 sample = """
