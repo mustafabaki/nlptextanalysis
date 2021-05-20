@@ -27,7 +27,7 @@
       <br>
     <h2>WordCloud Result:</h2>
     
-        <img src="{{ img_file }}"  width="250" height="250">
+        <img src="{{ img_file }}"  width="450" height="450">
         <p>You can download this WordCloud result by clicking the button down below</p>
         <a href="{{ img_file }}" download="">
         <button class="btn"><i class="fa fa-download"></i> Download</button>
@@ -75,6 +75,29 @@
                   <th scope="row">{{ loop.index }}</th>
                   <td>{{ result.score }}</td>
                   <td>{{ result.topic }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+        {% endif %}
+
+
+        {% if algorithm == 'nmf' %}
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Topic Number</th>
+              <th scope="col">Vocabulary of The Topic</th>
+              <th scope="col">Accuracy score</th>
+            </tr>
+          </thead>
+            <tbody>
+                {% for result in tpcs %}
+                
+                <tr>
+                  <th scope="row">{{ loop.index }}</th>
+                  <td>{{ result.topic }}</td>
+                  <td>{{ result.score }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
