@@ -1,0 +1,1 @@
+This folder includes the results of the analyzed texts as .xls format.
