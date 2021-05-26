@@ -17,7 +17,7 @@ def pam_english(input_file):
 
     # make PA model and train
     print("training model...")
-    mdl = tp.PAModel(k1=5, k2=50, min_cf=15, min_df=4, corpus=train_corpus, seed=42)
+    mdl = tp.PAModel(k1=5, k2=50, min_cf=10, min_df=3, corpus=train_corpus, seed=42)
     mdl.train(0)
     print('Num docs:', len(mdl.docs), ', Vocab size:', len(mdl.used_vocabs), ', Num words:', mdl.num_words)
     print('Removed top words:', mdl.removed_top_words)
@@ -46,7 +46,7 @@ def pam_english(input_file):
 
     return topic_result
 
-
+""""
 print('Running PAM from raw corpus')
 topics = pam_english('enwiki-1000.txt')
 # example for accessing values
@@ -58,3 +58,4 @@ topics = pam_english('enwiki-1000.txt')
 for w in range(len(topics)):
     print("\n")
     print(topics[w]["topic"], topics[w]["prob"], topics[w]["subs"], topics[w]["subs_prob"], sep='\t')
+"""
