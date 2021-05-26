@@ -9,6 +9,7 @@ import nltk
 import lda_70
 import nmf_ready_to_use
 import xlwt
+import pam_eng
 
 
 
@@ -101,6 +102,27 @@ def test():
 
 
         return render_template("resultpage.html",img_file =pic1, algorithm = "nmf", tpcs = results , excelfile = excelfile)
+    elif language == 'english' and algorithm == 'pam':
+        results = pam_eng.pam_english("uploads/"+f.filename)
+        workbook = xlwt.Workbook()
+        sheet = workbook.add_sheet("results")
+        i=1
+        sheet.write(0,0,'Topic')
+        sheet.write(0,1,'Sub Topics')
+        sheet.write(0,2,'Accuracy Score')
+
+        for value in results:
+            sheet.write(i,0, value['topic'])
+            
+            sheet.write(i,1,str(value['subs']))
+            sheet.write(i,2,value['prob'])
+            i=i+1
+
+        workbook.save("static/excelfiles/"+f.filename+".xls")
+        name = f.filename+".xls"
+        excelfile = os.path.join(app.config['EXCEL_FILES'], name)
+
+        return render_template("resultpage.html",img_file =pic1, algorithm = "pam", tpcs = results, excelfile = excelfile)
         
 
 @app.route('/', methods =['POST'])
