@@ -123,6 +123,38 @@
             </a>
             </center>
         {% endif %}
+
+
+        {% if algorithm == 'pam' %}
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Topic Number</th>
+              <th scope="col">Topic</th>
+              <th scope="col">Sub Topics</th>
+              <th scope="col">Accuracy score</th>
+            </tr>
+          </thead>
+            <tbody>
+                {% for result in tpcs %}
+                
+                <tr>
+                  <th scope="row">{{ loop.index }}</th>
+                  <td>{{ result['topic'] }}</td>
+                  <td>{{ result['subs'] }}</td>
+                  <td>{{ result['prob'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+
+            <center>
+              <p>You can download the result table as an excel file by clicking the button below</p>
+              <a href="{{ excelfile }}" download="">
+                <button class="btn"><i class="fa fa-download"></i> Download</button>
+            </a>
+            </center>
+        {% endif %}
     </div>
       
 
