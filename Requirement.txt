@@ -1,0 +1,25 @@
+
+Dependencies to install or maybe more
+pip install Flask
+pip install Flask-Bootstrap
+pip install Flask-Login
+pip install flask-utils
+pip install Flask-WTF
+pip install WTForms
+pip install Flask-SQLAlchemy
+pip install Flask-Login
+pip install os-win
+pip install wordcloud
+pip install NaiveBayes
+pip install nltk
+pip install lda
+pip install xlwt
+pip install pam
+
+
+For the database on powershell (To start it so that it works after you have replaced it in your own directory)
+python 
+from app import db
+(ignore error)
+db.create_all()
+exit()

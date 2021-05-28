@@ -13,6 +13,7 @@
   <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">Text Classification Tool</a>
+        <h1 class = "page-header" >Welcome, {{name}}</h1>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -43,9 +44,8 @@
             <option value="pam">PAM Algorithm</option>
             
           </select><br>
-
-
           <button type="submit">Submit</button>
+          <a href="{{ url_for('logout') }}" > <button type="button"  >Log out</button> </a> 
         </div>
       </form>
     <!-- Optional JavaScript -->
