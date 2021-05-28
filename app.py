@@ -17,6 +17,7 @@ import lda_70
 import nmf_ready_to_use
 import xlwt
 import pam_eng
+import sendemail
 
 
 
@@ -29,7 +30,7 @@ app.config["SECRET_KEY"] = "any string works here"
 # location of the database/ you should change this to your relative path directory 
 app.config[
     "SQLALCHEMY_DATABASE_URI"
-] = "sqlite:///C:\\Users\\deji6\\OneDrive\\Desktop\\nlptextanalysis\\database.db"
+] = "sqlite:///database.db"
 
 
 # initializing the database and using  helper tools
@@ -125,7 +126,7 @@ def free():
 @login_required
 def logout():
    logout_user()
-   return redirect(url_for('login'))
+   return redirect(url_for('index'))
 
 @app.route('/')
 
@@ -139,12 +140,12 @@ def test():
     algorithm = request.form['algorithm']
     f = request.files["file1"]
   
-    f.save(os.path.join("uploads",f.filename))
-    word_cloud.cloudify(f.filename)
+    f.save(os.path.join("uploads",current_user.username+"-"+f.filename))
+    word_cloud.cloudify(current_user.username+"-"+f.filename)
 
-    outname = f.filename+"_out.png"
+    outname = current_user.username+"-"+f.filename+"_out.png"
     pic1 = os.path.join(app.config['UPLOAD_FOLDER'], outname)
-    file1 = open("uploads/"+f.filename, 'r', encoding='utf-8')
+    file1 = open("uploads/"+current_user.username+"-"+f.filename, 'r', encoding='utf-8')
     text = file1.read()
     if language == 'english' and algorithm == 'naivebayes':
        
@@ -163,11 +164,11 @@ def test():
             sheet.write(i,0,i )
             sheet.write(i,1, value)
             i = i+1        
-        workbook.save("static/excelfiles/"+f.filename+".xls")
-        name = f.filename+".xls"
+        workbook.save("static/excelfiles/"+current_user.username+"-"+f.filename+".xls")
+        name = current_user.username+"-"+f.filename+".xls"
         excelfile = os.path.join(app.config['EXCEL_FILES'], name)
         
-        
+        sendemail.send_email(pic1,excelfile, current_user.email)
 
         return render_template("resultpage.html", img_file =pic1, algorithm = 'naivebayes', tpcs = topics, dominant = dominant_topic, excelfile =excelfile)
     elif language == 'turkish' and algorithm == 'lda':
@@ -183,9 +184,10 @@ def test():
             sheet.write(i,1,value.score)
             i=i+1
 
-        workbook.save("static/excelfiles/"+f.filename+".xls")
-        name = f.filename+".xls"
+        workbook.save("static/excelfiles/"+current_user.username+"-"+f.filename+".xls")
+        name = current_user.username+"-"+f.filename+".xls"
         excelfile = os.path.join(app.config['EXCEL_FILES'], name)
+        sendemail.send_email(pic1,excelfile, current_user.email)
 
         return render_template("resultpage.html", img_file = pic1, algorithm = "lda", tpcs = results, excelfile = excelfile)
     
@@ -201,9 +203,10 @@ def test():
             sheet.write(i,1,value.score)
             i=i+1
 
-        workbook.save("static/excelfiles/"+f.filename+".xls")
-        name = f.filename+".xls"
+        workbook.save("static/excelfiles/"+current_user.username+"-"+f.filename+".xls")
+        name = current_user.username+"-"+f.filename+".xls"
         excelfile = os.path.join(app.config['EXCEL_FILES'], name)
+        sendemail.send_email(pic1,excelfile, current_user.email)
 
 
         return render_template("resultpage.html",img_file =pic1, algorithm = "nmf", tpcs = results , excelfile = excelfile)
@@ -223,21 +226,15 @@ def test():
             sheet.write(i,2,value['prob'])
             i=i+1
 
-        workbook.save("static/excelfiles/"+f.filename+".xls")
-        name = f.filename+".xls"
+        workbook.save("static/excelfiles/"+current_user.username+"-"+f.filename+".xls")
+        name = current_user.username+"-"+f.filename+".xls"
         excelfile = os.path.join(app.config['EXCEL_FILES'], name)
+        sendemail.send_email(pic1,excelfile, current_user.email)
 
         return render_template("resultpage.html",img_file =pic1, algorithm = "pam", tpcs = results, excelfile = excelfile)
         
 
-@app.route('/', methods =['POST'])
-def upload():
-    
-    return 'mission completed  :)'
 
-@app.route('/download')
-def download(thepath):
-    return send_file(thepath, as_attachment=True)
 
 if __name__=="__main__":
     app.run(debug=True)
