@@ -1,0 +1,4 @@
+Source: https://www.kaggle.com/mohneesh7/shopee-challenge-eda-nlp-on-title-ocr/data
+Data: https://drive.google.com/file/d/1jQvKuQd3cXvTJzla3qSCz9V2ZHuvkctX/view?usp=sharing
+Lang: ENG
+
