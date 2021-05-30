@@ -26,6 +26,7 @@ bootstrap = Bootstrap(app)
 picFolder = os.path.join('static', 'pics')
 app.config['EXCEL_FILES'] = os.path.join('static', 'excelfiles')
 app.config['UPLOAD_FOLDER'] = picFolder
+app.config['TEXT_FOLDER'] = os.path.join('static','texts')
 app.config["SECRET_KEY"] = "any string works here"
 # location of the database/ you should change this to your relative path directory 
 app.config[
@@ -114,12 +115,13 @@ def signup():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('index.html', name=current_user.username)
+    return render_template('index.html', name=current_user.username, auth = 'yes')
 
 # routes the user into the application without login check
 @app.route('/free')
 def free():
-    return render_template('index.html', name= "Guest User")
+
+    return render_template('index.html', name= "Guest User", auth = 'no')
 
  # sign the user out 
 @app.route('/logout')
@@ -139,13 +141,19 @@ def test():
     language = request.form['language']
     algorithm = request.form['algorithm']
     f = request.files["file1"]
-  
-    f.save(os.path.join("uploads",current_user.username+"-"+f.filename))
-    word_cloud.cloudify(current_user.username+"-"+f.filename)
+    if current_user.is_authenticated:
+        usernameee = current_user.username
+        isAuthenticated = 'yes'
+    else:
+        usernameee = "guest"
+        isAuthenticated = 'no'
+    f.save(os.path.join("uploads",usernameee+"-"+f.filename))
+    f.save(os.path.join("static/texts",usernameee+"-"+f.filename))
+    word_cloud.cloudify(usernameee+"-"+f.filename)
 
-    outname = current_user.username+"-"+f.filename+"_out.png"
+    outname = usernameee+"-"+f.filename+"_out.png"
     pic1 = os.path.join(app.config['UPLOAD_FOLDER'], outname)
-    file1 = open("uploads/"+current_user.username+"-"+f.filename, 'r', encoding='utf-8')
+    file1 = open("uploads/"+usernameee+"-"+f.filename, 'r', encoding='utf-8')
     text = file1.read()
     if language == 'english' and algorithm == 'naivebayes':
        
@@ -164,11 +172,11 @@ def test():
             sheet.write(i,0,i )
             sheet.write(i,1, value)
             i = i+1        
-        workbook.save("static/excelfiles/"+current_user.username+"-"+f.filename+".xls")
-        name = current_user.username+"-"+f.filename+".xls"
+        workbook.save("static/excelfiles/"+usernameee+"-"+f.filename+".xls")
+        name = usernameee+"-"+f.filename+".xls"
         excelfile = os.path.join(app.config['EXCEL_FILES'], name)
-        
-        sendemail.send_email(pic1,excelfile, current_user.email)
+        if current_user.is_authenticated:
+            sendemail.send_email(pic1,excelfile, current_user.email)
 
         return render_template("resultpage.html", img_file =pic1, algorithm = 'naivebayes', tpcs = topics, dominant = dominant_topic, excelfile =excelfile)
     elif language == 'turkish' and algorithm == 'lda':
@@ -184,10 +192,11 @@ def test():
             sheet.write(i,1,value.score)
             i=i+1
 
-        workbook.save("static/excelfiles/"+current_user.username+"-"+f.filename+".xls")
-        name = current_user.username+"-"+f.filename+".xls"
+        workbook.save("static/excelfiles/"+usernameee+"-"+f.filename+".xls")
+        name = usernameee+"-"+f.filename+".xls"
         excelfile = os.path.join(app.config['EXCEL_FILES'], name)
-        sendemail.send_email(pic1,excelfile, current_user.email)
+        if current_user.is_authenticated:
+            sendemail.send_email(pic1,excelfile, current_user.email)
 
         return render_template("resultpage.html", img_file = pic1, algorithm = "lda", tpcs = results, excelfile = excelfile)
     
@@ -203,15 +212,16 @@ def test():
             sheet.write(i,1,value.score)
             i=i+1
 
-        workbook.save("static/excelfiles/"+current_user.username+"-"+f.filename+".xls")
-        name = current_user.username+"-"+f.filename+".xls"
+        workbook.save("static/excelfiles/"+usernameee+"-"+f.filename+".xls")
+        name = usernameee+"-"+f.filename+".xls"
         excelfile = os.path.join(app.config['EXCEL_FILES'], name)
-        sendemail.send_email(pic1,excelfile, current_user.email)
+        if current_user.is_authenticated:
+            sendemail.send_email(pic1,excelfile, current_user.email)
 
 
         return render_template("resultpage.html",img_file =pic1, algorithm = "nmf", tpcs = results , excelfile = excelfile)
     elif language == 'english' and algorithm == 'pam':
-        results = pam_eng.pam_english("uploads/"+f.filename)
+        results = pam_eng.pam_english("uploads/"+usernameee+"-"+f.filename)
         workbook = xlwt.Workbook()
         sheet = workbook.add_sheet("results")
         i=1
@@ -226,15 +236,51 @@ def test():
             sheet.write(i,2,value['prob'])
             i=i+1
 
-        workbook.save("static/excelfiles/"+current_user.username+"-"+f.filename+".xls")
-        name = current_user.username+"-"+f.filename+".xls"
+        workbook.save("static/excelfiles/"+usernameee+"-"+f.filename+".xls")
+        name = usernameee+"-"+f.filename+".xls"
         excelfile = os.path.join(app.config['EXCEL_FILES'], name)
-        sendemail.send_email(pic1,excelfile, current_user.email)
+        if current_user.is_authenticated:
+            sendemail.send_email(pic1,excelfile, current_user.email)
 
         return render_template("resultpage.html",img_file =pic1, algorithm = "pam", tpcs = results, excelfile = excelfile)
         
 
+@app.route('/previous')
+@login_required
+def pull_previous():
+    """
+    This function is used to list the previous results.
+    It returns the previous files and results.
+    """
+    pics = []
+    texts = []
+    excels = []
+
+    all = []
+
+    directory = r'static\\pics'
+    for filename in os.listdir(directory):
+        if current_user.username in filename:
+            pics.append(os.path.join(directory,filename))
+    
+    directory = r'static\\texts'
+    for filename in os.listdir(directory):
+        if current_user.username in filename:
+            texts.append(os.path.join(directory,filename))
+
+    directory = r'static\\excelfiles'
+    for filename in os.listdir(directory):
+        if current_user.username in filename:
+            excels.append(os.path.join(directory,filename))
+
+    for i in range(len(pics)):
+        add = {'picture': pics[i], 'text': texts[i], 'excel': excels[i]}
+        all.append(add)
 
 
+    print('here is the all:')
+    print(all)
+    return render_template('display_previous.html', passed = all)
+    
 if __name__=="__main__":
     app.run(debug=True)
