@@ -13,21 +13,31 @@
   <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">Text Classification Tool</a>
-        <h1 class = "page-header" >Welcome, {{name}}</h1>
+        
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
-      
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            {% if auth == 'yes' %}
+            <li class="nav-item active">
+              <a class="nav-link" href="{{ url_for('pull_previous')}}">Your Previous Results <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link" href="{{url_for('logout')}}">Log Out</a>
+            </li>
+            {% endif %}
       
       </nav>
-    
-      <form action="{{url_for('test')}}" method="POST" enctype=multipart/form-data>
+    <div style="background-color:#f2f2f2 ; width: 500px; height: 500px; margin: auto; margin-top: 5%;">
+      <center><h1 class = "page-header" >Welcome, {{name}}</h1></center>
+      <form action="{{url_for('test')}}" method="POST" enctype=multipart/form-data style="padding: 15%; padding-left: 20%;">
         <div class="form-group">
           <label for="file1">Please choose the file to be analyzed</label>
           <input type="file" class="form-control-file" id="file1" name="file1"> <br>
           <label for="file2">Please choose your dataset</label> <span title="Uploading dataset is optional. You can analyze your text without uploading a dataset if you choose Naive Bayes algorithm.">&#x1F6C8</span> <br>
           <input type="file" id="file2" name="file2"><br>
-<br>
+          <br>
           <select name="language" id="languageid">
             <option value="null">Please choose the language of the text</option>
             <option value="english"> English</option>
@@ -43,11 +53,29 @@
             <option value="nmf"> NMF Algorithm</option>
             <option value="pam">PAM Algorithm</option>
             
-          </select><br>
-          <button type="submit">Submit</button>
-          <a href="{{ url_for('logout') }}" > <button type="button"  >Log out</button> </a> 
+          </select><br> <br>
+          <center><button type="submit" id="button" onclick="setTimeout(showIt,2000)">Submit</button></center>
+          
         </div>
       </form>
+
+    </div>
+    <br>
+    <center>
+    <div class="alert alert-danger" role="alert" id="warn" style="visibility: hidden; width: 500px;">
+      
+      Took too much time? Don't worry, you can leave the page, all results will be delivered via email if you signed in!
+    </div>
+    </center>
+    <script type="text/javascript">
+    function showIt() {
+      
+      document.getElementById("warn").style.visibility = "visible";
+      
+      
+}
+     
+    </script>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
