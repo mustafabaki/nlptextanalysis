@@ -1,0 +1,1 @@
+This folder will keep the users previously uploaded text files to be analyzed.
