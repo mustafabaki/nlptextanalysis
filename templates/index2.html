@@ -1,12 +1,74 @@
 {% extends "bootstrap/base.html" %}
 
 {% block title %}
-Demo App
+NLP Text Analysis Tool
 {% endblock %}
 
 {% block styles %}
 {{super()}}
 <link rel="stylesheet" href="{{url_for('.static', filename='starter-template.css')}}">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<style>
+  .footer-basic {
+  padding:40px 0;
+  background-color:#ffffff;
+  color:#4b4c4d;
+}
+
+.footer-basic ul {
+  padding:0;
+  list-style:none;
+  text-align:center;
+  font-size:18px;
+  line-height:1.6;
+  margin-bottom:0;
+}
+
+.footer-basic li {
+  padding:0 10px;
+}
+
+.footer-basic ul a {
+  color:inherit;
+  text-decoration:none;
+  opacity:0.8;
+}
+
+.footer-basic ul a:hover {
+  opacity:1;
+}
+
+.footer-basic .social {
+  text-align:center;
+  padding-bottom:25px;
+}
+
+.footer-basic .social > a {
+  font-size:24px;
+  width:40px;
+  height:40px;
+  line-height:40px;
+  display:inline-block;
+  text-align:center;
+  border-radius:50%;
+  border:1px solid #ccc;
+  margin:0 8px;
+  color:inherit;
+  opacity:0.75;
+}
+
+.footer-basic .social > a:hover {
+  opacity:0.9;
+}
+
+.footer-basic .copyright {
+  margin-top:15px;
+  text-align:center;
+  font-size:13px;
+  color:#aaa;
+  margin-bottom:0;
+}
+</style>
 {% endblock %}
 
 {% block content %}
@@ -35,9 +97,80 @@ Demo App
     <div class="container">
 
       <div class="starter-template">
-        <h1></h1>
-        <p class="lead"> BLANK FOR NOW</p>
+        <h1>Welcome to NLP Text Analysis Tool</h1>
+        
       </div>
 
     </div><!-- /.container -->
+
+    <div class="w3-content w3-display-container">
+     
+     <div class="mySlides">
+       <center> <img src="{{url_for('.static', filename = 'nlp.png')}}" style="width: 300px; height: 300px;"></center>
+    <center> <p style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; font-size:large;">Please use the arrows to see the services we provide!</p></center>
+     </div>
+
+     <div class="mySlides">
+      <center><img src="{{url_for('.static', filename = 'wordcloud.png')}}" style="width: 300px; height: 300px;" ></center>
+         <center> <p style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; font-size: large;">Generating WordCloud with your given text</p></center>
+    </div>
+
+    <div class="mySlides">
+      <center><img src="{{url_for('.static', filename = 'excel.jpg')}}" style="width: 450px; height: 300px;" ></center>
+         <center> <p style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; font-size: large;">Results as excel file</p></center>
+    </div>
+
+    <div class="mySlides">
+      <center><img src="{{url_for('.static', filename = 'email-2.png')}}" style="width: 450px; height: 300px;" ></center>
+         <center> <p style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; font-size: large;">Instant result delivery via email</p></center>
+    </div>
+      
+      
+      <button class="w3-button w3-black w3-display-left" onclick="plusDivs(-1)">&#10094;</button>
+      <button class="w3-button w3-black w3-display-right" onclick="plusDivs(1)">&#10095;</button>
+    </div>
+    <br>
+    <h1 style="margin-left: 45%; padding: auto;"> What is NLP? </h1>
+    <center><p style="width: 500px; background-color: #f6d8ac;">
+      Natural language processing (NLP) is a subfield of linguistics, computer science, and artificial intelligence concerned with the interactions between computers and human language, in particular how to program computers to process and analyze large amounts of natural language data. The result is a computer capable of "understanding" the contents of documents, including the contextual nuances of the language within them. The technology can then accurately extract information and insights contained in the documents as well as categorize and organize the documents themselves.
+
+Challenges in natural language processing frequently involve speech recognition, natural language understanding, and natural-language generation.For more information, please refer to <u><a href="https://en.wikipedia.org/wiki/Natural_language_processing">this Wikipedia page.</a> </u>
+    </p></center>
+
+
+
+
+    <div class="footer-basic">
+      <footer>
+          
+          <ul class="list-inline">
+              <li class="list-inline-item"><a href="#">Home</a></li>
+              <li class="list-inline-item"><a href="#">Services</a></li>
+              <li class="list-inline-item"><a href="#">About</a></li>
+              
+              
+          </ul>
+          <p class="copyright">NLP Text Analysis Tool © 2021</p>
+      </footer>
+  </div>
+
+    <script>
+    var slideIndex = 1;
+    showDivs(slideIndex);
+    
+    function plusDivs(n) {
+      showDivs(slideIndex += n);
+    }
+    
+    function showDivs(n) {
+      var i;
+      var x = document.getElementsByClassName("mySlides");
+      if (n > x.length) {slideIndex = 1}
+      if (n < 1) {slideIndex = x.length}
+      for (i = 0; i < x.length; i++) {
+        x[i].style.display = "none";  
+      }
+      x[slideIndex-1].style.display = "block";  
+    }
+    </script>
 {% endblock %}
