@@ -1,3 +1,9 @@
+class result:
+    def __init__(self, topic, score):
+        self.topic = topic
+        self.score = score
+
+
 def make_ngrams(texts,n,ngram_mod):
     return [turnmod(doc,n,ngram_mod) for doc in texts]
 
@@ -23,7 +29,7 @@ def clean(df):
   df = df.replace('’','', regex=True)
   return df 
 
-def prepare_stopwords(link='C:/Users/akdem/Desktop/nlptextanalysis-main/stopwords.csv'):
+def prepare_stopwords(link):
   stop_word_list=pd.read_csv(link)
   stop_word_list=stop_word_list.values.tolist()
   stopwords=[]
@@ -147,11 +153,5 @@ def preprocess(text,stopwords):
      
     return result
 
-fetchArray=Queue()
-if __name__ == '__main__':
-    freeze_support()
-    p1=Process(target=f,args=(DATA_LINK, DATA_COLUMN_NAME, STOPWORD_CHOICE, STOPWORD_LINK, NGRAM_CHOICE,NGRAM_NUM, TestData, fetchArray))
-    p1.start()
-    p1.join()
-    topics=fetchArray.get()
+
 
