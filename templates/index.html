@@ -29,7 +29,7 @@
             {% endif %}
       
       </nav>
-    <div style="background-color:#f2f2f2 ; width: 500px; height: 500px; margin: auto; margin-top: 5%;">
+    <div style="background-color:#f2f2f2 ; width: 500px; height: 800px; margin: auto; margin-top: 5%;">
       <center><h1 class = "page-header" >Welcome, {{name}}</h1></center>
       <form action="{{url_for('test')}}" method="POST" enctype=multipart/form-data style="padding: 15%; padding-left: 20%;">
         <div class="form-group">
@@ -52,8 +52,26 @@
             <option value="lda">LDA Algorithm</option>
             <option value="nmf"> NMF Algorithm</option>
             <option value="pam">PAM Algorithm</option>
+            <option value="lda2">LDA Algorithm with Dataset </option>
             
           </select><br> <br>
+          <br>
+          <select name="ngram" id="ngram">
+            <option value="false">Do you want n-grams?</option>
+            <option value="True">Yes</option>
+            <option value="False">No</option>
+          </select>
+          <label for="file3">You can upload your own stopwords</label>
+          <input type="file" class="form-control-file" id="file3" name="file3"> <br>
+          
+          <label for="number">Please specify the number of your N-grams. Ignore this if you don't want N-grams.</label>
+          <br>
+          <input type="number" max="3" min="1" id="number" name="number">
+          <label for="column">Please write your column name of dataset if you have selected a dataset</label>
+          <input type="text" id="column" name="column">
+          <br><br>
+          
+          
           <center><button type="submit" id="button" onclick="setTimeout(showIt,2000)">Submit</button></center>
           
         </div>
