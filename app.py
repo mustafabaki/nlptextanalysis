@@ -18,6 +18,9 @@ import nmf_ready_to_use
 import xlwt
 import pam_eng
 import sendemail
+import trl_da_choice
+from multiprocessing import Process, freeze_support, Queue
+
 
 
 
@@ -141,6 +144,7 @@ def test():
     language = request.form['language']
     algorithm = request.form['algorithm']
     f = request.files["file1"]
+    dataset = request.files["file2"]
     if current_user.is_authenticated:
         usernameee = current_user.username
         isAuthenticated = 'yes'
@@ -180,7 +184,7 @@ def test():
 
         return render_template("resultpage.html", img_file =pic1, algorithm = 'naivebayes', tpcs = topics, dominant = dominant_topic, excelfile =excelfile)
     elif language == 'turkish' and algorithm == 'lda':
-
+        
         results = lda_70.lda70(text)
         workbook = xlwt.Workbook()
         sheet = workbook.add_sheet("results")
@@ -243,6 +247,31 @@ def test():
             sendemail.send_email(pic1,excelfile, current_user.email)
 
         return render_template("resultpage.html",img_file =pic1, algorithm = "pam", tpcs = results, excelfile = excelfile)
+    elif language == 'turkish' and dataset.filename != "" and request.form['algorithm']=='lda2':
+        
+        dataset.save(os.path.join("uploads",usernameee+"-"+dataset.filename))
+        stopwords = request.files['file3']
+        if stopwords.filename != "":
+            choice = True
+            stopwords.save(os.path.join("uploads",usernameee+"-"+stopwords.filename))
+        else:
+            choice = False
+        if  request.form['ngram'] == 'True':
+            ngram_choice = True
+            ngram_num = int(request.form['number'])
+        else:
+            ngram_choice = False  
+        
+        freeze_support()
+        Q = Queue()
+        p1=Process(target=trl_da_choice.f,args=("uploads/"+usernameee+"-"+dataset.filename, request.form['column'], choice, "uploads/"+usernameee+"-"+stopwords.filename, ngram_choice,ngram_num, "uploads/"+usernameee+"-"+f.filename, Q,))
+        p1.start()
+        p1.join()
+
+        results = Q.get()
+        
+
+        return render_template("resultpage.html",img_file =pic1, algorithm = "lda", tpcs = results)
         
 
 @app.route('/previous')
@@ -282,5 +311,8 @@ def pull_previous():
     print(all)
     return render_template('display_previous.html', passed = all)
     
+
 if __name__=="__main__":
+    
+
     app.run(debug=True)
