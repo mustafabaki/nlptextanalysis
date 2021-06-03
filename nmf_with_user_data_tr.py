@@ -68,7 +68,7 @@ def nmf_with_dataset(dataset_path, dataset_column,stopword_choice,stopwords_user
 
 
   #number of n
-  min_n_gram = 2
+  min_n_gram = 1
   max_n_gram = ngram_number # user input
 
   import nltk
