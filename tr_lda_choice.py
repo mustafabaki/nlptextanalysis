@@ -69,7 +69,7 @@ def f(DATA_LINK, DATA_COLUMN_NAME, STOPWORD_CHOICE, STOPWORD_LINK, NGRAM_CHOICE,
     if (STOPWORD_CHOICE):
         stopwords=prepare_stopwords(STOPWORD_LINK)
     else:
-        stopwords=prepare_stopwords()
+        stopwords=prepare_stopwords(link='stopwords.csv')
     ######################################################################
 
     df=clean(df)
