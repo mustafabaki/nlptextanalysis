@@ -18,9 +18,11 @@ import nmf_ready_to_use
 import xlwt
 import pam_eng
 import sendemail
-import trl_da_choice
+import nmf_with_user_data_en
+import tr_lda_choice
+import en_lda_choice
+import nmf_with_user_data_tr
 from multiprocessing import Process, freeze_support, Queue
-
 
 
 
@@ -264,7 +266,7 @@ def test():
         
         freeze_support()
         Q = Queue()
-        p1=Process(target=trl_da_choice.f,args=("uploads/"+usernameee+"-"+dataset.filename, request.form['column'], choice, "uploads/"+usernameee+"-"+stopwords.filename, ngram_choice,ngram_num, "uploads/"+usernameee+"-"+f.filename, Q,))
+        p1=Process(target=tr_lda_choice.f,args=("uploads/"+usernameee+"-"+dataset.filename, request.form['column'], choice, "uploads/"+usernameee+"-"+stopwords.filename, ngram_choice,ngram_num, "uploads/"+usernameee+"-"+f.filename, Q,))
         p1.start()
         p1.join()
 
@@ -272,7 +274,65 @@ def test():
         
 
         return render_template("resultpage.html",img_file =pic1, algorithm = "lda", tpcs = results)
+
+    elif language == 'english' and dataset.filename != "" and algorithm == "nmf2":
+        dataset.save(os.path.join("uploads",usernameee+"-"+dataset.filename))
+        stopwords = request.files['file3']
+        if stopwords.filename != "":
+            choice = True
+            stopwords.save(os.path.join("uploads",usernameee+"-"+stopwords.filename))
+        else:
+            choice = False
+        if  request.form['ngram'] == 'True':
+            ngram_choice = True
+            ngram_num = int(request.form['number'])
+        else:
+            ngram_choice = False  
+        file3 = open("uploads/"+usernameee+"-"+stopwords.filename, 'r', encoding='utf-8')
+        stopwordss = file3.read()
+        results = nmf_with_user_data_en.nmf_with_dataset("uploads/"+usernameee+"-"+dataset.filename,request.form['column'], choice,stopwordss,ngram_num,text)
+        return render_template("resultpage.html",img_file =pic1, algorithm = "nmf", tpcs = results )
+    elif language == 'english' and dataset.filename != "" and algorithm == 'lda2':
+        dataset.save(os.path.join("uploads",usernameee+"-"+dataset.filename))
+        stopwords = request.files['file3']
+        if stopwords.filename != "":
+            choice = True
+            stopwords.save(os.path.join("uploads",usernameee+"-"+stopwords.filename))
+        else:
+            choice = False
+        if  request.form['ngram'] == 'True':
+            ngram_choice = True
+            ngram_num = int(request.form['number'])
+        else:
+            ngram_choice = False  
         
+        freeze_support()
+        Q = Queue()
+        p1=Process(target=en_lda_choice.f,args=("uploads/"+usernameee+"-"+dataset.filename, request.form['column'], choice, "uploads/"+usernameee+"-"+stopwords.filename, ngram_choice,ngram_num, "uploads/"+usernameee+"-"+f.filename, Q,))
+        p1.start()
+        p1.join()
+
+        results = Q.get()
+        return render_template("resultpage.html",img_file =pic1, algorithm = "lda", tpcs = results)
+    elif language == 'turkish' and dataset.filename != "" and algorithm == "nmf2":
+        dataset.save(os.path.join("uploads",usernameee+"-"+dataset.filename))
+        stopwords = request.files['file3']
+        if stopwords.filename != "":
+            choice = True
+            stopwords.save(os.path.join("uploads",usernameee+"-"+stopwords.filename))
+        else:
+            choice = False
+        if  request.form['ngram'] == 'True':
+            ngram_choice = True
+            ngram_num = int(request.form['number'])
+        else:
+            ngram_choice = False  
+        file3 = open("uploads/"+usernameee+"-"+stopwords.filename, 'r', encoding='utf-8')
+        stopwordss = file3.read()
+        results = nmf_with_user_data_tr.nmf_with_dataset("uploads/"+usernameee+"-"+dataset.filename,request.form['column'], choice,stopwordss,ngram_num,text)
+        return render_template("resultpage.html",img_file =pic1, algorithm = "nmf", tpcs = results )
+
+
 
 @app.route('/previous')
 @login_required
