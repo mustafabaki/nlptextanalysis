@@ -25,7 +25,7 @@ def clean(df):
   df = df.replace('’','', regex=True)
   return df 
 
-def prepare_stopwords(link='C:/Users/akdem/Desktop/nlptextanalysis-main/stopwords.csv'):
+def prepare_stopwords(link='stopwords.csv'):
   stop_word_list=pd.read_csv(link)
   stop_word_list=stop_word_list.values.tolist()
   stopwords=[]
