@@ -13,6 +13,8 @@ import os
 import word_cloud
 import naivebayes
 import nltk 
+from PIL import Image
+import numpy as np
 import lda_70
 import nmf_ready_to_use
 import xlwt
@@ -145,6 +147,7 @@ def index():
 def test():
     language = request.form['language']
     algorithm = request.form['algorithm']
+    shape = request.form['wid']
     f = request.files["file1"]
     dataset = request.files["file2"]
     if current_user.is_authenticated:
@@ -155,8 +158,10 @@ def test():
         isAuthenticated = 'no'
     f.save(os.path.join("uploads",usernameee+"-"+f.filename))
     f.save(os.path.join("static/texts",usernameee+"-"+f.filename))
-    word_cloud.cloudify(usernameee+"-"+f.filename)
 
+    
+    word_cloud.cloudify(usernameee+"-"+f.filename, shape)
+    
     outname = usernameee+"-"+f.filename+"_out.png"
     pic1 = os.path.join(app.config['UPLOAD_FOLDER'], outname)
     file1 = open("uploads/"+usernameee+"-"+f.filename, 'r', encoding='utf-8')
@@ -229,6 +234,7 @@ def test():
     elif language == 'english' and algorithm == 'pam':
         results = pam_eng.pam_english("uploads/"+usernameee+"-"+f.filename)
         workbook = xlwt.Workbook()
+        
         sheet = workbook.add_sheet("results")
         i=1
         sheet.write(0,0,'Topic')
