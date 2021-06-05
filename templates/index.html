@@ -29,7 +29,7 @@
             {% endif %}
       
       </nav>
-    <div style="background-color:#f2f2f2 ; width: 500px; height: 800px; margin: auto; margin-top: 5%;">
+    <div style="background-color:#f2f2f2 ; width: 500px; height: 900px; margin: auto; margin-top: 5%;">
       <center><h1 class = "page-header" >Welcome, {{name}}</h1></center>
       <form action="{{url_for('test')}}" method="POST" enctype=multipart/form-data style="padding: 15%; padding-left: 20%;">
         <div class="form-group">
@@ -69,6 +69,10 @@
           <input type="number" max="3" min="1" id="number" name="number">
           <label for="column">Please write your column name of dataset if you have selected a dataset</label>
           <input type="text" id="column" name="column">
+          <br>
+          <label for="topic_number">Enter the topic number you want the algorithm to extract </label>
+          <br>
+          <input type="number" min="10" id="topic_number" name="topic_number">
           <br><br>
           
           
