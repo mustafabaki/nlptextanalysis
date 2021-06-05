@@ -56,7 +56,7 @@ import numpy as np
 
 
 
-def f(DATA_LINK, DATA_COLUMN_NAME, STOPWORD_CHOICE, STOPWORD_LINK, NGRAM_CHOICE,NGRAM_NUM, TestData,fetchArray):
+def f(DATA_LINK, DATA_COLUMN_NAME, STOPWORD_CHOICE, STOPWORD_LINK, NGRAM_CHOICE,NGRAM_NUM, TestData,topic_number_user,fetchArray):
     data = pd.read_csv(DATA_LINK)
     df=data[DATA_COLUMN_NAME]
     ######################################################################
@@ -105,7 +105,7 @@ def f(DATA_LINK, DATA_COLUMN_NAME, STOPWORD_CHOICE, STOPWORD_LINK, NGRAM_CHOICE,
     bow_corpus = [dictionary.doc2bow(doc) for doc in data_lemmatized]
 
     lda_model =  gensim.models.LdaMulticore(bow_corpus, 
-                                   num_topics = 70, 
+                                   num_topics = topic_number_user, 
                                    id2word = dictionary,                                    
                                    passes = 10, workers = 2)
 
