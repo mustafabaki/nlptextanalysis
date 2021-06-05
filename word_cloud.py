@@ -10,10 +10,26 @@ def cloudify(filename , shape):
     text = open("uploads/"+filename, mode='r', encoding='utf-8').read()
     stopwords = STOPWORDS
     
-    if shape  == 'a' : 
+    if shape  == 'Cl' : 
         mask =  np.array(Image.open("2.jpg")) #added mask variable to use below
-    elif  shape == 'b' :  
-        mask  = np.array(Image.open("3.jpg"))
+    
+    elif  shape == 'Ci' :  
+        mask  = np.array(Image.open("d.jpg"))
+
+    elif  shape == 'e' :  
+        mask  = np.array(Image.open("f.png"))
+     
+
+    elif  shape == 'Sq' :  
+        mask  = np.array(Image.open("s.png"))
+
+    elif  shape == 'Tm' :  
+        mask  = np.array(Image.open("td.png"))
+
+   # elif  shape == 'r' :  
+    #    mask  = np.array(Image.open("cr.png"))
+
+
     
     wc = WordCloud(
         background_color = 'white',
