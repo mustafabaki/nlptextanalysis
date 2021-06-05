@@ -2,7 +2,7 @@ from flask import Flask, render_template, request,redirect, url_for,send_from_di
 from flask import send_file
 from flask_bootstrap import Bootstrap
 from flask_login.utils import logout_user
-from flask_wtf import FlaskForm
+from flask_wtf import FlaskForm, form
 from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import InputRequired, Email, Length
 from flask_sqlalchemy import SQLAlchemy
@@ -266,7 +266,8 @@ def test():
         
         freeze_support()
         Q = Queue()
-        p1=Process(target=tr_lda_choice.f,args=("uploads/"+usernameee+"-"+dataset.filename, request.form['column'], choice, "uploads/"+usernameee+"-"+stopwords.filename, ngram_choice,ngram_num, "uploads/"+usernameee+"-"+f.filename, Q,))
+        p1=Process(target=tr_lda_choice.f,args=("uploads/"+usernameee+"-"+dataset.filename, request.form['column'], choice, "uploads/"+usernameee+"-"+stopwords.filename, ngram_choice,ngram_num, "uploads/"+usernameee+"-"+f.filename,int(request.form['topic_number']), Q,))
+
         p1.start()
         p1.join()
 
@@ -308,7 +309,7 @@ def test():
         
         freeze_support()
         Q = Queue()
-        p1=Process(target=en_lda_choice.f,args=("uploads/"+usernameee+"-"+dataset.filename, request.form['column'], choice, "uploads/"+usernameee+"-"+stopwords.filename, ngram_choice,ngram_num, "uploads/"+usernameee+"-"+f.filename, Q,))
+        p1=Process(target=en_lda_choice.f,args=("uploads/"+usernameee+"-"+dataset.filename, request.form['column'], choice, "uploads/"+usernameee+"-"+stopwords.filename, ngram_choice,ngram_num, "uploads/"+usernameee+"-"+f.filename, int(request.form['topic_number']),Q,))
         p1.start()
         p1.join()
 
