@@ -147,7 +147,7 @@ def index():
 def test():
     language = request.form['language']
     algorithm = request.form['algorithm']
-    shape = request.form['wid']
+    shape = request.form['Word']
     f = request.files["file1"]
     dataset = request.files["file2"]
     if current_user.is_authenticated:

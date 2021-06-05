@@ -1,5 +1,0 @@
-Hotel reviews by kaggle.com (512k reviews)
-
-taken from https://www.kaggle.com/jiashenliu/515k-hotel-reviews-data-in-europe 
-
-Available at: https://drive.google.com/file/d/1x4Aj86OoXy4p25k0NsK-EmSnMevl86wI/view?usp=sharing 

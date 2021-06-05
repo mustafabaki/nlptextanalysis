@@ -1,3 +1,0 @@
-Source:https://www.kaggle.com/mustfkeskin/turkish-wikipedia-dump
-
-As Turkish dataset, "Text" column of the file was used.

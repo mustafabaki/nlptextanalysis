@@ -1,4 +1,0 @@
-Source: http://qwone.com/~jason/20Newsgroups/
-Data: https://drive.google.com/drive/folders/1He6wTUXzzj0EDrOZlUQq_cLdEzMoQNzZ?usp=sharing
-Lang: ENG
-
