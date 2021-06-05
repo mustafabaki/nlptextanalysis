@@ -16,6 +16,7 @@ import nltk
 import lda_70
 import nmf_ready_to_use
 import xlwt
+import lda_en_30_with_saved_model
 import pam_eng
 import sendemail
 import nmf_with_user_data_en
@@ -332,7 +333,25 @@ def test():
         stopwordss = file3.read()
         results = nmf_with_user_data_tr.nmf_with_dataset("uploads/"+usernameee+"-"+dataset.filename,request.form['column'], choice,stopwordss,ngram_num,text)
         return render_template("resultpage.html",img_file =pic1, algorithm = "nmf", tpcs = results )
+    elif language == 'english' and algorithm == 'lda':
+        results = lda_en_30_with_saved_model.lda(text)
+        workbook = xlwt.Workbook()
+        sheet = workbook.add_sheet("results")
+        i=1
+        sheet.write(0,0,'Score')
+        sheet.write(0,1,'Topic Vocabulary')
+        for value in results:
+            sheet.write(i,0, value.topic)
+            sheet.write(i,1,value.score)
+            i=i+1
 
+        workbook.save("static/excelfiles/"+usernameee+"-"+f.filename+".xls")
+        name = usernameee+"-"+f.filename+".xls"
+        excelfile = os.path.join(app.config['EXCEL_FILES'], name)
+        if current_user.is_authenticated:
+            sendemail.send_email(pic1,excelfile, current_user.email)
+
+        return render_template("resultpage.html", img_file = pic1, algorithm = "lda", tpcs = results, excelfile = excelfile)
 
 
 @app.route('/previous')
