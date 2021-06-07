@@ -3,6 +3,52 @@ class result:
         self.topic = topic
         self.score = score
 
+from zeyrek.morphology import MorphAnalyzer
+import gensim
+import re
+import pandas as pd
+from gensim.utils import simple_preprocess
+import zeyrek
+import pickle
+
+
+
+
+def make_ngrams(texts,n,ngram_mod):
+    return [turnmod(texts[0],n,ngram_mod)]
+
+
+def clean(df):
+  df.fillna('').astype(str)
+  df=df.astype(str)
+  df = df.map(lambda x: re.sub('[,\.!?();:$%&#"]', '', x))
+  df = df.replace('\n','', regex=True)                     # depends on the data
+  df = df.replace('\'','', regex=True)                     # depends on the data
+  df = df.replace('-','', regex=True)                      # depends on the data
+  df = df.replace('’','', regex=True)
+  return df 
+
+def prepare_stopwords(link='C:/Users/akdem/Desktop/nlptextanalysis-main/stopwords.csv'):
+  stop_word_list=pd.read_csv(link)
+  stop_word_list=stop_word_list.values.tolist()
+  stopwords=[]
+  for i in stop_word_list:
+    stopwords.append(i[0])
+  return stopwords
+
+def turnmod(text,n,ngram_mod):
+    data_gram=ngram_mod[0][text]
+    for i in range(n-1):
+      data_gram=ngram_mod[i+1][data_gram]
+    return data_gram
+
+def preprocess(text,stopwords):
+    result=[]
+    for token in gensim.utils.simple_preprocess(text) :
+        if token not in stopwords and len(token) > 3:
+            result.append(token)
+     
+    return result
 
 # -*- coding: utf-8 -*-
 """LDA Wiki 70 (With Saved Model).ipynb
@@ -14,59 +60,69 @@ class result:
 """
 
 #pip install gensim
-def lda70(thetext):
-    import gensim
-    import re
-    from gensim.utils import simple_preprocess
+def lda_70(thetext,ngramNumber,isNgramb,isStopwords,stpwrd_path):
+    
+    analyzer=MorphAnalyzer()
+    if (isStopwords):
+        stopwords=prepare_stopwords(stpwrd_path)
+    else:
+        stopwords=prepare_stopwords()
 
-    import pickle
-    dictionary = gensim.corpora.Dictionary.load('Algorithm/NLP LDA With 70 topic/dictionary.gensim')
-    corpus = pickle.load(open('Algorithm/NLP LDA With 70 topic/corpus.pkl', 'rb'))
-    lda = gensim.models.ldamodel.LdaModel.load('Algorithm/NLP LDA With 70 topic/model_70_topic.gensim')
+    if (ngramNumber==1 or (isNgramb==False)):
+        dictionary = gensim.corpora.Dictionary.load('Algorithm/NLP LDA With 70 topic/dictionary.gensim')
+        corpus = pickle.load(open('Algorithm/NLP LDA With 70 topic/corpus.pkl', 'rb'))
+        lda = gensim.models.ldamodel.LdaModel.load('Algorithm/NLP LDA With 70 topic/model_70_topic.gensim')
+    elif (ngramNumber==2):
+        dictionary = gensim.corpora.Dictionary.load('C:/Users/akdem/Desktop/nlptextanalysis-main/2gram/turk_dictionary2.gensim')
+        corpus = pickle.load(open('C:/Users/akdem/Desktop/nlptextanalysis-main/2gram/turk_corpus2.pkl', 'rb'))
+        lda = gensim.models.ldamodel.LdaModel.load('C:/Users/akdem/Desktop/nlptextanalysis-main/2gram/turk_lda2.gensim')
+    elif (ngramNumber==3):
+        dictionary = gensim.corpora.Dictionary.load('Algorithm/NLP LDA With 70 topic/dictionary.gensim')
+        corpus = pickle.load(open('Algorithm/NLP LDA With 70 topic/corpus.pkl', 'rb'))
+        lda = gensim.models.ldamodel.LdaModel.load('Algorithm/NLP LDA With 70 topic/model_70_topic.gensim')
 
     import pandas as pd
-    from snowballstemmer import TurkishStemmer
-    stemmer=TurkishStemmer()
     import nltk
     nltk.download('stopwords')
     WPT = nltk.WordPunctTokenizer()
-    stop_word_list = nltk.corpus.stopwords.words('turkish')
-    def lemmatize_stemming(text):
-        return stemmer.stemWord(text)
-
-    # Tokenize and lemmatize
-    def preprocess(text):
-        result=[]
-        for token in gensim.utils.simple_preprocess(text) :
-            if token not in stop_word_list and len(token) > 3:
-                result.append(lemmatize_stemming(token))
-        
-        return result
     unseen_document = [thetext]
     # Data preprocessing step for the unseen document
 
     import nltk
     nltk.download('stopwords')
     WPT = nltk.WordPunctTokenizer()
-    stop_word_list = nltk.corpus.stopwords.words('turkish')
     #Daha sonra verimizdeki noktalama işaretlerini kaldırıp stopword'lerden arındırıyoruz.
     from pandas import DataFrame
     df = DataFrame(unseen_document,columns=['text'])
-    docs = df['text']
-    docs = docs.map(lambda x: re.sub('[,\.!?();:$%&#"]', '', x))
-    docs = docs.map(lambda x: x.lower())
-    docs = docs.map(lambda x: x.strip())
-    #stopword'leri kaldırıyoruz buradaki fonksiyon ile (Gereksiz sözcükler çünkü)
-    def token(values):
-        filtered_words = [word for word in values.split() if word not in stop_word_list]
-        
-        not_stopword_doc = " ".join(filtered_words)
-        return not_stopword_doc
-    docs = docs.map(lambda x: token(x))
-    df = docs
-    print(df.head(1))
+    df = df['text']
+    df=clean(df)
+    print("data temizlendi")
 
-    bow_vector = dictionary.doc2bow(preprocess(df[0]))
+    processed_docs = []
+
+    for doc in df:
+        processed_docs.append(preprocess(doc,stopwords))
+    if ((isNgramb) or (not ngramNumber==1)):
+        ngram=[]
+        ngram_mod=[]
+        for i in range(3):
+            if(i==0):
+                ngram.append(gensim.models.Phrases(processed_docs, min_count=5, threshold=100)) # higher threshold fewer phrases
+            else:
+                ngram.append(gensim.models.Phrases(ngram[i-1][processed_docs], min_count=5, threshold=100)) # higher threshold fewer phrases
+            ngram_mod.append(gensim.models.phrases.Phraser(ngram[i]))
+
+    if ((isNgramb) or (not ngramNumber==1)):
+    # Form Ngrams
+        data_words_ngrams = make_ngrams(processed_docs,ngramNumber,ngram_mod)[0]
+        # Do lemmatization keeping only noun, adj, vb, adv
+
+        data_lemmatized = lemmatization(data_words_ngrams,analyzer)
+    else:
+        data_lemmatized=processed_docs
+
+
+    bow_vector = dictionary.doc2bow(data_lemmatized)
 
     topics = []
 
@@ -77,4 +133,15 @@ def lda70(thetext):
         rslt = result(str(score), str(re.findall('"([^"]*)"', str(lda.print_topic(index,5)))))
         topics.append(rslt)
 
+    
     return topics
+
+def lemmatization(texts,analyzer):
+      texts_out = []
+      for sent in texts:
+          x=analyzer.analyze(sent)[0][0]
+          if (x.pos=="Unk"):
+            texts_out.append(analyzer.lemmatize(sent)[0][1][0])
+          else:
+            texts_out.append(x.lemma)
+      return texts_out
