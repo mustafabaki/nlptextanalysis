@@ -28,7 +28,7 @@ def clean(df):
   df = df.replace('’','', regex=True)
   return df 
 
-def prepare_stopwords(link='C:/Users/akdem/Desktop/nlptextanalysis-main/stopwords.csv'):
+def prepare_stopwords(link='stopwords.csv'):
   stop_word_list=pd.read_csv(link)
   stop_word_list=stop_word_list.values.tolist()
   stopwords=[]
@@ -69,17 +69,17 @@ def lda_70(thetext,ngramNumber,isNgramb,isStopwords,stpwrd_path):
         stopwords=prepare_stopwords()
 
     if (ngramNumber==1 or (isNgramb==False)):
-        dictionary = gensim.corpora.Dictionary.load('Algorithm/NLP LDA With 70 topic/dictionary.gensim')
-        corpus = pickle.load(open('Algorithm/NLP LDA With 70 topic/corpus.pkl', 'rb'))
-        lda = gensim.models.ldamodel.LdaModel.load('Algorithm/NLP LDA With 70 topic/model_70_topic.gensim')
+        dictionary = gensim.corpora.Dictionary.load('turk_dictionary1.gensim')
+        corpus = pickle.load(open('turk_corpus1.pkl', 'rb'))
+        lda = gensim.models.ldamodel.LdaModel.load('turk_lda1.gensim')
     elif (ngramNumber==2):
-        dictionary = gensim.corpora.Dictionary.load('C:/Users/akdem/Desktop/nlptextanalysis-main/2gram/turk_dictionary2.gensim')
-        corpus = pickle.load(open('C:/Users/akdem/Desktop/nlptextanalysis-main/2gram/turk_corpus2.pkl', 'rb'))
-        lda = gensim.models.ldamodel.LdaModel.load('C:/Users/akdem/Desktop/nlptextanalysis-main/2gram/turk_lda2.gensim')
+        dictionary = gensim.corpora.Dictionary.load('turk_dictionary2.gensim')
+        corpus = pickle.load(open('turk_corpus2.pkl', 'rb'))
+        lda = gensim.models.ldamodel.LdaModel.load('turk_lda2.gensim')
     elif (ngramNumber==3):
-        dictionary = gensim.corpora.Dictionary.load('Algorithm/NLP LDA With 70 topic/dictionary.gensim')
-        corpus = pickle.load(open('Algorithm/NLP LDA With 70 topic/corpus.pkl', 'rb'))
-        lda = gensim.models.ldamodel.LdaModel.load('Algorithm/NLP LDA With 70 topic/model_70_topic.gensim')
+        dictionary = gensim.corpora.Dictionary.load('turk_dictionary3.gensim')
+        corpus = pickle.load(open('turk_corpus3.pkl', 'rb'))
+        lda = gensim.models.ldamodel.LdaModel.load('turk_lda3.gensim')
 
     import pandas as pd
     import nltk
