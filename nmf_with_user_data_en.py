@@ -66,8 +66,11 @@ def nmf_with_dataset(dataset_path, dataset_column,stopword_choice,stopwords_user
 
 
   #number of n
-  min_n_gram = 1
+  min_n_gram = 0
   max_n_gram = ngram_number # user input
+
+  #number of topic
+  n_topic = 10 #user input
 
   import nltk
   nltk.download('punkt')
@@ -120,7 +123,7 @@ def nmf_with_dataset(dataset_path, dataset_column,stopword_choice,stopwords_user
   tfidf = tfidf_vectorizer.fit_transform(content)
   tfidf_feature_names = tfidf_vectorizer.get_feature_names()
   # Run NMF
-  nmf = NMF(n_components=20, random_state=1, alpha=.1, l1_ratio=.5, init='nndsvd').fit(tfidf)
+  nmf = NMF(n_components=n_topic, random_state=1, alpha=.1, l1_ratio=.5, init='nndsvd').fit(tfidf)
 
   # To display words with desc. order 
   def display_topics(model, feature_names, no_top_words):
