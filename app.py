@@ -193,7 +193,19 @@ def test():
         return render_template("resultpage.html", img_file =pic1, algorithm = 'naivebayes', tpcs = topics, dominant = dominant_topic, excelfile =excelfile)
     elif language == 'turkish' and algorithm == 'lda':
         
-        results = lda_70.lda70(text)
+        stopwords = request.files['file3']
+        if stopwords.filename != "":
+            choice = True
+            stopwords.save(os.path.join("uploads",usernameee+"-"+stopwords.filename))
+        else:
+            choice = False
+        if  request.form['ngram'] == 'True':
+            ngram_choice = True
+            ngram_num = int(request.form['number'])
+        else:
+            ngram_choice = False  
+
+        results = lda_70.lda_70(text,ngram_num,ngram_choice, choice, "uploads/"+usernameee+"-"+stopwords.filename)
         workbook = xlwt.Workbook()
         sheet = workbook.add_sheet("results")
         i=1
