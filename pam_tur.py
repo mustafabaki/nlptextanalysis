@@ -17,10 +17,7 @@ def pam_turkish(input_file):
 
     # make PA model and train
     print("training model...")
-    mdl = tp.PAModel(k1=5, k2=50, min_cf=10, min_df=3, corpus=train_corpus, seed=42)
-    mdl.train(0)
-    print('Num docs:', len(mdl.docs), ', Vocab size:', len(mdl.used_vocabs), ', Num words:', mdl.num_words)
-    print('Removed top words:', mdl.removed_top_words)
+    mdl = tp.PAModel(k1=5, k2=25, min_cf=10, min_df=1, corpus=train_corpus, seed=42)
     for i in range(0, 100, 10):  # increase 100 for more accurate results, but it will take more time
         mdl.train(10)
         print('Iteration: {}\tLog-likelihood: {}'.format(i, mdl.ll_per_word))
@@ -30,6 +27,11 @@ def pam_turkish(input_file):
     mdl.save('trained_pam.bin')
     # for loading use mdl.load('trained_pam.bin')
 
+    # Creating ngrams, max_len determines bigram or trigram, 3 means trigram
+    ngrams = train_corpus.extract_ngrams(min_cf=2, max_len=3)
+    for c in ngrams:
+        if len(c.words) == 3:
+            print(c.words[0], c.words[1], c.words[2], sep='\t')  # ngram words
     topic_result = []
     for k in range(mdl.k1):
         print("== Topic #{} ==".format(k))
@@ -47,4 +49,4 @@ def pam_turkish(input_file):
     return topic_result
 
 # example usage
-# topics = pam_turkish('text.txt')
+# topics = pam_turkish('tolstoy.txt')
