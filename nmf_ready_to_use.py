@@ -19,18 +19,37 @@ def nmf_algorithm(thetext):
   from sklearn.decomposition import NMF
   import pandas as pd
   import joblib
+  from nltk.tokenize import word_tokenize
+  import nltk
   pd.set_option('display.max_columns', None)  
   pd.set_option('display.max_colwidth', None)
   #import data
   df = pd.read_csv('Algorithm/NMF/NMF_clean_data.csv')
-
   content = df['0']
-
 
   import joblib
   from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
-  nmf = joblib.load('Algorithm/NMF/finalized_model.sav')
+  
+  n_gram = 1 #ngram_number
 
+  no_top_words = 10
+  # NMF is able to use tf-idf
+  tfidf_vectorizer = TfidfVectorizer(max_df=0.95, min_df=2, max_features=1000, stop_words='english', ngram_range=(0,n_gram))
+  tfidf = tfidf_vectorizer.fit_transform(content)
+
+
+  if n_gram == 1:
+    tfidf_feature_names = joblib.load('Algorithm/NMF/tfidf_feature_names_1gram.sav')
+    nmf = joblib.load('Algorithm/NMF/finalized_model_1gram.sav')
+  elif n_gram == 2:
+    tfidf_feature_names=joblib.load('Algorithm/NMF/tfidf_feature_names_2gram.sav')
+    nmf = joblib.load('Algorithm/NMF/finalized_model_2gram.sav')
+  elif n_gram == 3:    
+    tfidf_feature_names = joblib.load('Algorithm/NMF/tfidf_feature_names_3gram.sav')
+    nmf = joblib.load('Algorithm/NMF/finalized_model_3gram.sav')
+
+  print(nmf)
+  print(tfidf)
   # clean the data
   #!python -m spacy download en_core_web_sm #run just ones to install en_core_web_sm, if you don't have it
   import spacy
@@ -44,14 +63,44 @@ def nmf_algorithm(thetext):
       text = re.sub(r'\w*\d\w*', '', text)
       return text
 
-  nlp = spacy.load("en_core_web_sm")
-  def lemmatizer(text):        
-      sent = []
-      doc = nlp(text)
-      for word in doc:
-          sent.append(word.lemma_)
-      return " ".join(sent)
+  sp = spacy.load('en_core_web_sm')
+  stopwords = sp.Defaults.stop_words
 
+  import nltk
+  nltk.download('punkt')
+  def stemmer_fun_stop(sentence,stopwords):
+      token_words=word_tokenize(sentence)
+      stem_sentence=[]
+      for word in token_words:
+        if word not in stopwords:
+          stem_sentence.append(word)
+          stem_sentence.append(" ") 
+      return "".join(stem_sentence)
+
+  import nltk
+  nltk.download('wordnet')
+  nltk.download('averaged_perceptron_tagger')
+  from nltk.corpus import wordnet
+  from nltk.stem import WordNetLemmatizer
+  lemmatizer = WordNetLemmatizer()
+
+  def get_wordnet_pos(word):
+    """Map POS tag to first character lemmatize() accepts"""
+    tag = nltk.pos_tag([word])[0][1][0].upper()
+    tag_dict = {"J": wordnet.ADJ,
+                "N": wordnet.NOUN,
+                "V": wordnet.VERB,
+                "R": wordnet.ADV}
+    return tag_dict.get(tag, wordnet.NOUN)
+
+  def lemma(sentence):
+    lem_content = []
+    sent = nltk.word_tokenize(sentence)
+    for w in sent:
+      word= lemmatizer.lemmatize(w, get_wordnet_pos(w))
+      lem_content.append(word)
+      lem_content.append(" ") 
+    return "".join(lem_content)
 
   # To display words with desc. order 
   def display_topics(model, feature_names, no_top_words):
@@ -60,21 +109,13 @@ def nmf_algorithm(thetext):
           print (" ".join([feature_names[i]
                           for i in topic.argsort()[:-no_top_words - 1:-1]]))
           
-  no_top_words = 10
-  #display_topics(nmf, tfidf_feature_names, no_top_words)
-  # NMF is able to use tf-idf
-  tfidf_vectorizer = TfidfVectorizer(max_df=0.95, min_df=2, max_features=1000, stop_words='english')
-  # tfidf = tfidf_vectorizer.fit_transform(df_clean)
-  tfidf = tfidf_vectorizer.fit_transform(content)
-  tfidf_feature_names = joblib.load('Algorithm/NMF/tfidf_feature_names.sav')
-
   import pandas as pd
 
   #Sample 
   sample = thetext
   sample_clean = clean_text(sample)
-  sample_lem = lemmatizer(sample_clean)
-  sample_all_clean = sample_lem.replace('-PRON-', '')
+  sample_lem = stemmer_fun_stop(sample_clean,stopwords)
+  sample_all_clean = lemma(sample_lem)
 
   # Transform the TF-IDF
   test = tfidf_vectorizer.transform([sample_all_clean])
@@ -131,8 +172,5 @@ def nmf_algorithm(thetext):
   
   return rslt
     
-
-
-
-
-
+    
+    
