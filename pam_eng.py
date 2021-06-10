@@ -50,8 +50,8 @@ def pam_english(input_file):
     return topic_result
 
 
-print('Running PAM from raw corpus')
-topics = pam_english('enwiki-1000.txt')
+# print('Running PAM from raw corpus')
+# topics = pam_english('enwiki-1000.txt')
 # example for accessing values
 # topic represents main topic, prob represents probability of main topic
 # subs represents list of 5 sub topics
