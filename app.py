@@ -225,7 +225,7 @@ def test():
         return render_template("resultpage.html", img_file = pic1, algorithm = "lda", tpcs = results, excelfile = excelfile)
     
     elif language == 'english' and algorithm == 'nmf':
-        results = nmf_ready_to_use.nmf_algorithm(text)
+        results = nmf_ready_to_use.nmf_algorithm(text, int(request.form['number']))
         workbook = xlwt.Workbook()
         sheet = workbook.add_sheet("results")
         i=1
