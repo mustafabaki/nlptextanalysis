@@ -14,7 +14,7 @@ class result:
         self.score = score
 
 
-def nmf_algorithm(thetext):
+def nmf_algorithm(thetext,ngram_num):
   from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
   from sklearn.decomposition import NMF
   import pandas as pd
@@ -30,7 +30,7 @@ def nmf_algorithm(thetext):
   import joblib
   from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
   
-  n_gram = 1 #ngram_number
+  n_gram = ngram_num #ngram_number
 
   no_top_words = 10
   # NMF is able to use tf-idf
