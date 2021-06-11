@@ -1,0 +1,5 @@
+Here are the required files for ngrams (For prepared data)
+
+https://drive.google.com/drive/folders/101ZgJyd0Z4UIG8hMIvkP5qaCB3i-7Ups?usp=sharing   1gram
+https://drive.google.com/drive/folders/1-b3IV5Wq60sAgouWi7Z93CTLa20b31d2?usp=sharing   2gram
+https://drive.google.com/drive/folders/1SIZPkMWDoqAWlL92Mra0GxuCPAUu1xS6?usp=sharing   3gram
