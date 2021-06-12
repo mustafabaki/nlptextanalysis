@@ -3,6 +3,9 @@ import tomotopy as tp
 
 
 def pam_english(input_file):
+    """ 
+    This function runs PAM algorithm for the specified English text, extracts n-grams, returns topics with subtopics of the text file.
+    """
     print("importing...")
     from nltk.stem.porter import PorterStemmer
     from nltk.corpus import stopwords
