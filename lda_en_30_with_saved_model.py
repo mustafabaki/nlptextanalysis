@@ -28,6 +28,7 @@ def lda(thetext):
     stemmer=SnowballStemmer('english')
     nltk.download('stopwords')
     WPT = nltk.WordPunctTokenizer()
+    """Loading Prepared Model"""
     dictionary = gensim.corpora.Dictionary.load('Algorithm/NLP LDA EN 30 Topics/lda_eng_dictionary.gensim')
     corpus = pickle.load(open('Algorithm/NLP LDA EN 30 Topics/lda_eng_corpus.pkl', 'rb'))
     lda = gensim.models.ldamodel.LdaModel.load('Algorithm/NLP LDA EN 30 Topics/lda_eng_model.gensim')
@@ -45,15 +46,14 @@ def lda(thetext):
         
         return result
 
-
+    """Loading Unseen Document"""
     unseen_document = [thetext]
-
+    """"Data Cleaning"""
     df = pd.DataFrame(unseen_document,columns=['text'])
     docs = df['text']
     docs = docs.map(lambda x: re.sub('[,\.\'!?();:$%&#"]', ' ', x))
     docs = docs.map(lambda x: x.lower())
     docs = docs.map(lambda x: x.strip())
-    #stopword'leri kaldırıyoruz buradaki fonksiyon ile (Gereksiz sözcükler çünkü)
     def token(values):
         filtered_words = [word for word in values.split() if word not in stop_word_list]
         
