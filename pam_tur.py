@@ -3,6 +3,9 @@ import tomotopy as tp
 
 
 def pam_turkish(input_file):
+    """ 
+    This function runs PAM algorithm for the specified Turkish text, extracts n-grams, returns topics with subtopics of the text file.
+    """
     print("importing...")
     from snowballstemmer import TurkishStemmer
     from nltk.corpus import stopwords
