@@ -85,18 +85,18 @@ def lda_70(thetext,ngramNumber,isNgramb,isStopwords,stpwrd_path):
     import nltk
     nltk.download('stopwords')
     WPT = nltk.WordPunctTokenizer()
+    
+    
+    """Data preprocessing step for the unseen document
+    """
     unseen_document = [thetext]
-    # Data preprocessing step for the unseen document
-
     import nltk
     nltk.download('stopwords')
     WPT = nltk.WordPunctTokenizer()
-    #Daha sonra verimizdeki noktalama işaretlerini kaldırıp stopword'lerden arındırıyoruz.
     from pandas import DataFrame
     df = DataFrame(unseen_document,columns=['text'])
     df = df['text']
     df=clean(df)
-    print("data temizlendi")
 
     processed_docs = []
 
@@ -129,7 +129,7 @@ def lda_70(thetext,ngramNumber,isNgramb,isStopwords,stpwrd_path):
 
     for index, score in sorted(lda[bow_vector], key=lambda tup: -1*tup[1]):
         print("Score: {}\t Topic: {}".format(score, lda.print_topic(index, 5)))
-    # rslt = result(str(score), str(lda.print_topic(index,5)))
+    
         rslt = result(str(score), str(re.findall('"([^"]*)"', str(lda.print_topic(index,5)))))
         topics.append(rslt)
 
