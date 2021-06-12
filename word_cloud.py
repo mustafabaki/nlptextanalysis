@@ -7,6 +7,9 @@ from flask import request
 import sys, os
 
 def cloudify(filename , shape):
+    """
+    This function takes filename and shape arguments to generate a WordCloud for the given text file.
+    """
     text = open("uploads/"+filename, mode='r', encoding='utf-8').read()
     stopwords = STOPWORDS
     

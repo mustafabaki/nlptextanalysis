@@ -50,6 +50,13 @@ login_manager.login_view = 'login'
 
 # defines the database for storing user details  / creating the model
 class User(UserMixin, db.Model):
+    """
+    This User class has 4 attributes:
+    id : user's id
+    username: username of the user
+    email: email of the user
+    password: password of the user
+    """
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(15), unique=True)
     email = db.Column(db.String(50), unique=True)
@@ -57,7 +64,10 @@ class User(UserMixin, db.Model):
 
 @login_manager.user_loader
 def load_user(user_id):
-   return User.query.get(int(user_id))
+    """ 
+    This function is used to authenticate the users
+    """
+    return User.query.get(int(user_id))
 
 
 def __repr__(self):
@@ -128,13 +138,14 @@ def dashboard():
 # routes the user into the application without login check
 @app.route('/free')
 def free():
-
+    """This function redirects the guest users to the appropriate page. """
     return render_template('index.html', name= "Guest User", auth = 'no')
 
  # sign the user out 
 @app.route('/logout')
 @login_required
 def logout():
+   """Logs out the user """
    logout_user()
    return redirect(url_for('index'))
 
