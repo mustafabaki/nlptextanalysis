@@ -75,6 +75,9 @@ def __repr__(self):
 
 # login class
 class LoginForm(FlaskForm):
+    """ 
+     This class collects the username and password  textfields  as stringfields from the login html (Login class)
+    """
     username = StringField(
         "username", validators=[InputRequired(), Length(min=4, max=15)]
     )
@@ -85,6 +88,9 @@ class LoginForm(FlaskForm):
 
 # sign up class
 class RegisterForm(FlaskForm):
+    """ 
+    This class collects the username and password  textfields  as stringfields from the registerform html (register class)
+    """
     email = StringField(
         "email",
         validators=[InputRequired(), Email(message="Invalid email"), Length(max=50)],
@@ -96,9 +102,13 @@ class RegisterForm(FlaskForm):
         "password", validators=[InputRequired(), Length(min=8, max=80)]
     )
 
-     # login function / where i compare the hashed password
+     
 @app.route("/login", methods=["GET", "POST"])
+
 def login():
+    """ 
+    login function / where i compare the hashed password
+    """
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
@@ -111,9 +121,12 @@ def login():
     return render_template("login.html", form=form)
 
 
-# sign up function/ where the passwords are hashed
+
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
+    """ 
+     sign up function/ where the passwords are hashed
+     """
     form = RegisterForm()
     if form.validate_on_submit():
         hashed_password = generate_password_hash(form.password.data, method= 'sha256')
@@ -129,10 +142,13 @@ def signup():
     return render_template("signup.html", form=form)
 
 
-# routes the user into the application with login check
+
 @app.route('/dashboard')
 @login_required
 def dashboard():
+    """ 
+    routes the user into the application with login check
+     """
     return render_template('index.html', name=current_user.username, auth = 'yes')
 
 # routes the user into the application without login check
@@ -150,9 +166,10 @@ def logout():
    return redirect(url_for('index'))
 
 @app.route('/')
-
 def index():
-    
+    """ 
+    app route for the index2 html
+     """
     return render_template("index2.html")
 
 @app.route('/', methods =['POST'])
