@@ -27,7 +27,7 @@ stop_word_list = nltk.corpus.stopwords.words('turkish')
 def lemmatize_stemming(text):
     return stemmer.stemWord(text)
 
-# Tokenize and lemmatize
+"""Tokenize and lemmatize"""
 def preprocess(text):
     result=[]
     for token in gensim.utils.simple_preprocess(text) :
@@ -36,20 +36,17 @@ def preprocess(text):
      
     return result
 unseen_document = ["SpaceX, NeuraLink ve Tesla şirketlerinin sahibi olan ünlü yatırımcı Elon Musk, Mars'a gidebilmek için gerekli olan teknolojilere merak saldı. Ayrıca, hedefinin Mars'ta koloni kurup orada ölmek istediğini söyledi"]
-# Data preprocessing step for the unseen document
 
 import nltk
 nltk.download('stopwords')
 WPT = nltk.WordPunctTokenizer()
 stop_word_list = nltk.corpus.stopwords.words('turkish')
-#Daha sonra verimizdeki noktalama işaretlerini kaldırıp stopword'lerden arındırıyoruz.
 from pandas import DataFrame
 df = DataFrame(unseen_document,columns=['text'])
 docs = df['text']
 docs = docs.map(lambda x: re.sub('[,\.!?();:$%&#"]', '', x))
 docs = docs.map(lambda x: x.lower())
 docs = docs.map(lambda x: x.strip())
-#stopword'leri kaldırıyoruz buradaki fonksiyon ile (Gereksiz sözcükler çünkü)
 def token(values):
     filtered_words = [word for word in values.split() if word not in stop_word_list]
     
