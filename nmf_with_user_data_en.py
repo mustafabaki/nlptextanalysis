@@ -66,7 +66,6 @@ def nmf_with_dataset(dataset_path, dataset_column,stopword_choice,stopwords_user
 
 
   #number of n
-  min_n_gram = 0
   max_n_gram = ngram_number # user input
 
   #number of topic
@@ -75,6 +74,9 @@ def nmf_with_dataset(dataset_path, dataset_column,stopword_choice,stopwords_user
   import nltk
   nltk.download('punkt')
   def stemmer_fun_stop(sentence,stopwords):
+    """
+    This function take a text and stopword list then remove the stopwords from the text and return merged sentence 
+    """
       token_words=word_tokenize(sentence)
       stem_sentence=[]
       for word in token_words:
@@ -96,7 +98,10 @@ def nmf_with_dataset(dataset_path, dataset_column,stopword_choice,stopwords_user
   lemmatizer = WordNetLemmatizer()
 
   def get_wordnet_pos(word):
-      """Map POS tag to first character lemmatize() accepts"""
+      """
+      Map POS tag to first character lemmatize() accepts
+      this function used for lemmatization, it detects the form of the word like noun,verb etc.
+      """
       tag = nltk.pos_tag([word])[0][1][0].upper()
       tag_dict = {"J": wordnet.ADJ,
                   "N": wordnet.NOUN,
@@ -105,6 +110,9 @@ def nmf_with_dataset(dataset_path, dataset_column,stopword_choice,stopwords_user
       return tag_dict.get(tag, wordnet.NOUN)
 
   def lemma(sentence):
+     """
+      lemmatize the given sentence   
+     """
     lem_content = []
     sent = nltk.word_tokenize(sentence)
     for w in sent:
@@ -119,7 +127,7 @@ def nmf_with_dataset(dataset_path, dataset_column,stopword_choice,stopwords_user
     i=i+1
 
   # NMF is able to use tf-idf
-  tfidf_vectorizer = TfidfVectorizer(max_df=0.95, min_df=2, max_features=1000, ngram_range=(min_n_gram,max_n_gram)) 
+  tfidf_vectorizer = TfidfVectorizer(max_df=0.95, min_df=2, max_features=1000, ngram_range=(max_n_gram,max_n_gram)) 
   tfidf = tfidf_vectorizer.fit_transform(content)
   tfidf_feature_names = tfidf_vectorizer.get_feature_names()
   # Run NMF
@@ -127,6 +135,9 @@ def nmf_with_dataset(dataset_path, dataset_column,stopword_choice,stopwords_user
 
   # To display words with desc. order 
   def display_topics(model, feature_names, no_top_words):
+        """
+         display the most used words of each topic
+        """
       for topic_idx, topic in enumerate(model.components_):
           print ("Topic %d:" % (topic_idx))
           print (" ".join([feature_names[i]
@@ -147,7 +158,10 @@ def nmf_with_dataset(dataset_path, dataset_column,stopword_choice,stopwords_user
   
   
   def display_topics_of_sample(model, feature_names, no_top_words, topic_names , prct):
-    y=29
+        """
+        display topics of the given sample
+        """
+    y= n_topic-1
     for x in range(5):
       topic_name = topic_names[0][y]
       y = y-1  
@@ -161,8 +175,11 @@ def nmf_with_dataset(dataset_path, dataset_column,stopword_choice,stopwords_user
 
   #make list
   def make_list(model, feature_names, no_top_words, topic_names , prct):
+    """
+    return list version of sample's topic.
+    """
       lst = []
-      y=19
+      y= n_topic-1
       for x in range(5):
           topic_name = topic_names[0][y]
           y = y-1  
