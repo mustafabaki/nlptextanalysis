@@ -8,12 +8,18 @@ Original file is located at
 """
 
 class result:
+    """
+    holds topic names and their proportions
+    """"
     def __init__(self, topic, score):
         self.topic = topic
         self.score = score
 
 
 def lda(thetext):
+    """
+    Main function to be called in interface
+    """
     #!pip install gensim
     import gensim
     from gensim.utils import simple_preprocess
@@ -36,9 +42,15 @@ def lda(thetext):
 
 
     def lemmatize_stemming(text):
+        """
+        Stemming the words and returning
+        """
         return stemmer.stem(text)
 
     def preprocess(text):
+        """
+        Filters the words according to stopwords and their length.
+        """
         result=[]
         for token in gensim.utils.simple_preprocess(text) :
             if token not in stop_word_list and len(token) > 3:
@@ -74,12 +86,21 @@ def lda(thetext):
 
 
     def make_bigrams(texts):
+        """
+        Returns biagram of words
+        """
         return [bigram_mod[doc] for doc in texts]
 
     def make_trigrams(texts):
+        """
+        Returns triagram of words
+        """
         return [trigram_mod[bigram_mod[doc]] for doc in texts]
 
     def lemmatization(texts, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV']):
+        """
+        Checks each word, make them lemmatized and returns lemmatized words as strings. Also only returns Nouns Adjectives Verbs and Adverbs
+        """
         texts_out = []
         for sent in texts:
             doc = nlp(" ".join(sent)) 
