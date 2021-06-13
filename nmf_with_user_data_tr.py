@@ -10,19 +10,100 @@ class result:
     def __init__(self, topic, score):
         self.topic = topic
         self.score = score
-  
+
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
+from sklearn.decomposition import NMF
+import pandas as pd
+import joblib
+import re
+import string
+import spacy
+from nltk.tokenize import word_tokenize
+import nltk        
+
+def clean_text(text):
+    '''Make text lowercase, remove text in square brackets, remove punctuation and remove words containing numbers.'''
+    text = text.lower()
+    text = re.sub(r'\[.*?\]', '', text)
+    text = re.sub(r'[%s]' % re.escape(string.punctuation), '', text)
+    text = re.sub(r'\w*\d\w*', '', text)
+    return text
+
+import nltk
+nltk.download('punkt')
+def stemmer_fun_stop(sentence,stopwords):
+    """
+    take sentence and stopword list and remove stopwords from the sentence
+    """
+    token_words=word_tokenize(sentence)
+    stem_sentence=[]
+    for word in token_words:
+        if word not in stopwords:
+            stem_sentence.append(word)
+            stem_sentence.append(" ") 
+    return "".join(stem_sentence)
+
+
+import zeyrek
+import nltk
+analyzer = zeyrek.MorphAnalyzer()
+
+def lemmatization(texts, allowed_postags=["Noun", 'Adj', 'Verb', 'Adv']):
+    """
+    turkish leematizer, it is not work properly and take so much times (not recommended to use)
+    if it does not run, write this command to the terminal 'pip install zeyrek'.
+    """
+    texts_out = []
+    text = texts.split(" ")
+    for sent in text:
+        if sent !="":
+            x=analyzer.analyze(sent)[0][0]
+            if (x.pos=="Unk"):
+                texts_out.append(analyzer.lemmatize(sent)[0][1][0])
+            else:
+                texts_out.append(x.lemma)
+    return texts_out    
+
+def combine(txt):
+    """
+    combine words and return one sentence
+    """
+    temp = []
+    for word in txt:
+        temp.append(word)
+        temp.append(" ")
+    return "".join(temp)
+
+#make list
+def make_list(model, feature_names, no_top_words, topic_names , prct, n_topic):
+    """
+    return list of most used words in the each topic
+    """
+    lst = []
+    y= n_topic 
+    for x in range(5):
+        topic_name = topic_names[0][y]
+        y = y-1  
+        for topic_idx, topic in enumerate(model.components_):
+            if topic_name == topic_idx:
+                lst.append( [prct[0][topic_name], " ".join([feature_names[i]
+                                for i in topic.argsort()[:-no_top_words - 1:-1]])])
+    return lst
+
+
+def display_topics(model, feature_names, no_top_words):
+    """
+    To display words with desc. order 
+    """
+    for topic_idx, topic in enumerate(model.components_):
+        print ("Topic %d:" % (topic_idx))
+        print (" ".join([feature_names[i]
+                        for i in topic.argsort()[:-no_top_words - 1:-1]]))
+
 def nmf_with_dataset(dataset_path, dataset_column,stopword_choice,stopwords_user, ngram_number,user_text):
-  from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
-  from sklearn.decomposition import NMF
-  import pandas as pd
-  import joblib
-  import re
-  import string
-  import spacy
-  from nltk.tokenize import word_tokenize
-  import nltk
-
-
+  """
+   dataset column refers to the column name that has to be used for nlp, stopwords user is a list includes stopwords , user text is the sample text.
+  """
   #import user dataset
   path=dataset_path 
   try:
@@ -36,13 +117,6 @@ def nmf_with_dataset(dataset_path, dataset_column,stopword_choice,stopwords_user
   #Cleaning Process
   pd.options.mode.chained_assignment = None  # default='warn'
 
-  def clean_text(text):
-      '''Make text lowercase, remove text in square brackets, remove punctuation and remove words containing numbers.'''
-      text = text.lower()
-      text = re.sub(r'\[.*?\]', '', text)
-      text = re.sub(r'[%s]' % re.escape(string.punctuation), '', text)
-      text = re.sub(r'\w*\d\w*', '', text)
-      return text
 
   i=0
   for text in content:
@@ -66,78 +140,36 @@ def nmf_with_dataset(dataset_path, dataset_column,stopword_choice,stopwords_user
     for text in initial_stopwords:
       stopwords.append(text)
 
-
   #number of n
-  min_n_gram = 0
   max_n_gram = ngram_number # user input
 
   #number of topic
   n_topic = 10 #user input
-
-  import nltk
-  nltk.download('punkt')
-  def stemmer_fun_stop(sentence,stopwords):
-      token_words=word_tokenize(sentence)
-      stem_sentence=[]
-      for word in token_words:
-        if word not in stopwords:
-          stem_sentence.append(word)
-          stem_sentence.append(" ") 
-      return "".join(stem_sentence)
 
   i=0
   for text in content:
     content[i] = stemmer_fun_stop(text,stopwords)
     i=i+1
 
-  #!pip install zeyrek
-  import zeyrek
-  import nltk
-  analyzer = zeyrek.MorphAnalyzer()
-
-  def lemmatization(texts, allowed_postags=["Noun", 'Adj', 'Verb', 'Adv']):
-        texts_out = []
-        text = texts.split(" ")
-        for sent in text:
-          if sent !="":
-            x=analyzer.analyze(sent)[0][0]
-            if (x.pos=="Unk"):
-              texts_out.append(analyzer.lemmatize(sent)[0][1][0])
-            else:
-              texts_out.append(x.lemma)
-        return texts_out
-
   data_lemmatized=[]
   for text in content:
     data_lemmatized.append(lemmatization(text, allowed_postags=['Noun', 'Adj', 'Verb', 'Adv']))
 
   data = []
-  def combine(txt):
-    temp = []
-    for word in txt:
-      temp.append(word)
-      temp.append(" ")
-    return "".join(temp)
 
   for txt in data_lemmatized:
     data.append(combine(txt))
 
   # NMF is able to use tf-idf
-  tfidf_vectorizer = TfidfVectorizer(max_df=0.95, min_df=2, max_features=1000, ngram_range=(min_n_gram,max_n_gram)) 
+  tfidf_vectorizer = TfidfVectorizer(max_df=0.95, min_df=2, max_features=1000, ngram_range=(max_n_gram,max_n_gram)) 
   tfidf = tfidf_vectorizer.fit_transform(data)
   tfidf_feature_names = tfidf_vectorizer.get_feature_names()
   # Run NMF
   nmf = NMF(n_components=n_topic, random_state=1, alpha=.1, l1_ratio=.5, init='nndsvd').fit(tfidf)
 
-  # To display words with desc. order 
-  def display_topics(model, feature_names, no_top_words):
-      for topic_idx, topic in enumerate(model.components_):
-          print ("Topic %d:" % (topic_idx))
-          print (" ".join([feature_names[i]
-                          for i in topic.argsort()[:-no_top_words - 1:-1]]))
           
   no_top_words = 10
-  display_topics(nmf, tfidf_feature_names, no_top_words)
+  #display_topics(nmf, tfidf_feature_names, no_top_words)
 
   #Sample 
   sample = user_text
@@ -151,38 +183,10 @@ def nmf_with_dataset(dataset_path, dataset_column,stopword_choice,stopwords_user
   test = tfidf_vectorizer.transform([sample_all_clean])
   #  Transform the TF-IDF: nmf_features
   nmf_features = nmf.transform(test)
-  
-  
-  def display_topics_of_sample(model, feature_names, no_top_words, topic_names , prct):
-    y=19
-    for x in range(5):
-      topic_name = topic_names[0][y]
-      y = y-1  
-      for topic_idx, topic in enumerate(model.components_):
-        if topic_name == topic_idx:
-          print ("Topic percentage %" , prct[0][topic_name])
-          print (" ".join([feature_names[i]
-                          for i in topic.argsort()[:-no_top_words - 1:-1]]))
-
-  prct = nmf.transform(test)*100
-
-  #make list
-  def make_list(model, feature_names, no_top_words, topic_names , prct):
-      lst = []
-      y=19
-      for x in range(5):
-          topic_name = topic_names[0][y]
-          y = y-1  
-          for topic_idx, topic in enumerate(model.components_):
-              if topic_name == topic_idx:
-                  lst.append( [prct[0][topic_name], " ".join([feature_names[i]
-                                  for i in topic.argsort()[:-no_top_words - 1:-1]])])
-      return lst
       
-  no_top_words=10
   prct = nmf.transform(test)*100
-  List = make_list(nmf, tfidf_feature_names, no_top_words, nmf.transform(test).argsort(axis=1), prct)
-
+  List = make_list(nmf, tfidf_feature_names, no_top_words, nmf.transform(test).argsort(axis=1), prct, n_topic)
+  rslt = []
   print(List)
   for index in range(len(List)):
     theresult = result(List[index][1], List[index][0])
