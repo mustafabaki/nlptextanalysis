@@ -1,7 +1,7 @@
 class result:
     """
     Holds topic names and their proportions
-    """"
+    """
     def __init__(self, topic, score):
         self.topic = topic
         self.score = score
@@ -28,25 +28,25 @@ def clean(df):
     """
     Cleans the data from some noisy elements (it can be change according to the data sent)
     """
-  df.fillna('').astype(str)
-  df=df.astype(str)
-  df = df.map(lambda x: re.sub('[,\.!?();:$%&#"]', '', x))
-  df = df.replace('\n','', regex=True)                     # depends on the data
-  df = df.replace('\'','', regex=True)                     # depends on the data
-  df = df.replace('-','', regex=True)                      # depends on the data
-  df = df.replace('’','', regex=True)
-  return df 
+    df.fillna('').astype(str)
+    df=df.astype(str)
+    df = df.map(lambda x: re.sub('[,\.!?();:$%&#"]', '', x))
+    df = df.replace('\n','', regex=True)                     # depends on the data
+    df = df.replace('\'','', regex=True)                     # depends on the data
+    df = df.replace('-','', regex=True)                      # depends on the data
+    df = df.replace('’','', regex=True)
+    return df 
 
 def prepare_stopwords(link='stopwords.csv'):
     """
     Creates stopword list. If there is no specialized stopwors, then it uses default document.
-    """"
-  stop_word_list=pd.read_csv(link)
-  stop_word_list=stop_word_list.values.tolist()
-  stopwords=[]
-  for i in stop_word_list:
-    stopwords.append(i[0])
-  return stopwords
+    """
+    stop_word_list=pd.read_csv(link)
+    stop_word_list=stop_word_list.values.tolist()
+    stopwords=[]
+    for i in stop_word_list:
+        stopwords.append(i[0])
+    return stopwords
 
 def turnmod(text,n,ngram_mod):
     """
@@ -162,11 +162,11 @@ def lemmatization(texts,analyzer):
     """
     Checks each word, make them lemmatized and returns lemmatized words as strings by using Morph Analyzer
     """
-      texts_out = []
-      for sent in texts:
-          x=analyzer.analyze(sent)[0][0]
-          if (x.pos=="Unk"):
+    texts_out = []
+    for sent in texts:
+        x=analyzer.analyze(sent)[0][0]
+        if (x.pos=="Unk"):
             texts_out.append(analyzer.lemmatize(sent)[0][1][0])
-          else:
+        else:
             texts_out.append(x.lemma)
-      return texts_out
+    return texts_out
