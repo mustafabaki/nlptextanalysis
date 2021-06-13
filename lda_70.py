@@ -1,4 +1,7 @@
 class result:
+    """
+    Holds topic names and their proportions
+    """"
     def __init__(self, topic, score):
         self.topic = topic
         self.score = score
@@ -15,10 +18,16 @@ import pickle
 
 
 def make_ngrams(texts,n,ngram_mod):
+    """
+    Sends each text to turmod function and returns its outputs as a list
+    """
     return [turnmod(texts[0],n,ngram_mod)]
 
 
 def clean(df):
+    """
+    Cleans the data from some noisy elements (it can be change according to the data sent)
+    """
   df.fillna('').astype(str)
   df=df.astype(str)
   df = df.map(lambda x: re.sub('[,\.!?();:$%&#"]', '', x))
@@ -29,6 +38,9 @@ def clean(df):
   return df 
 
 def prepare_stopwords(link='stopwords.csv'):
+    """
+    Creates stopword list. If there is no specialized stopwors, then it uses default document.
+    """"
   stop_word_list=pd.read_csv(link)
   stop_word_list=stop_word_list.values.tolist()
   stopwords=[]
@@ -37,12 +49,18 @@ def prepare_stopwords(link='stopwords.csv'):
   return stopwords
 
 def turnmod(text,n,ngram_mod):
+    """
+    Completes ngrams cumulatively according to the amount of given ngrams
+    """
     data_gram=ngram_mod[0][text]
     for i in range(n-1):
       data_gram=ngram_mod[i+1][data_gram]
     return data_gram
 
 def preprocess(text,stopwords):
+    """
+    Filters the words according to stopwords and their length.
+    """
     result=[]
     for token in gensim.utils.simple_preprocess(text) :
         if token not in stopwords and len(token) > 3:
@@ -61,6 +79,10 @@ def preprocess(text,stopwords):
 
 #pip install gensim
 def lda_70(thetext,ngramNumber,isNgramb,isStopwords,stpwrd_path):
+    
+    """
+    Main function to be called in interface
+    """
     
     analyzer=MorphAnalyzer()
     if (isStopwords):
@@ -137,6 +159,9 @@ def lda_70(thetext,ngramNumber,isNgramb,isStopwords,stpwrd_path):
     return topics
 
 def lemmatization(texts,analyzer):
+    """
+    Checks each word, make them lemmatized and returns lemmatized words as strings by using Morph Analyzer
+    """
       texts_out = []
       for sent in texts:
           x=analyzer.analyze(sent)[0][0]
