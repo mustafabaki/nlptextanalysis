@@ -32,11 +32,14 @@ def clean_text(text):
     return text
 
 def combine(txt):
-  temp = []
-  for word in txt:
-    temp.append(word)
-    temp.append(" ")
-  return "".join(temp)
+    """
+    combine words
+    """
+    temp = []
+    for word in txt:
+        temp.append(word)
+        temp.append(" ")
+    return "".join(temp)
 
 stopwords_txt = "ancak,varmak,tak,kö,de,yok,olmak,olup,acaba,ama,aslında,az,bazı,belki,biri,birkaç,birşey,biz,bu,çok,çünkü,da,daha,de,defa,diye,eğer,en,gibi,hem,hep,hepsi,her,hiç,için,ile,ise,kez,ki,kim,mı,mu,mü,nasıl,ne,neden,nerde,nerede,nereye,niçin,niye,o,sanki,şey,siz,şu,tüm,ve,veya,ya,yani,’,-"
 initial_stopwords = stopwords_txt.split(",")
@@ -49,6 +52,9 @@ nltk.download('punkt')
 from nltk.tokenize import word_tokenize
 import nltk
 def stemmer_fun_stop(sentence,stopwords):
+    """
+    remove stopwords from the given sentence
+    """
     token_words=word_tokenize(sentence)
     stem_sentence=[]
     for word in token_words:
@@ -57,14 +63,6 @@ def stemmer_fun_stop(sentence,stopwords):
           stem_sentence.append(word)
           stem_sentence.append(" ") 
     return "".join(stem_sentence)
-
-"""content.to_csv('clean_data_türkce.csv')
-!cp clean_data_türkce.csv "drive/My Drive/"  
-
-with open('/content/cleandata_tr_new.csv', 'w') as writefile:
-  for a in content:  
-    writefile.write(a)
-"""
 
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.decomposition import NMF
@@ -77,8 +75,11 @@ import joblib
 nmf = joblib.load('/content/drive/MyDrive/finalized_model_tr_son.sav')
 #nmf = NMF(n_components=20, random_state=1, alpha=.1, l1_ratio=.5, init='nndsvd').fit(tfidf)
 
-# To display words with desc. order 
+ 
 def display_topics(model, feature_names, no_top_words):
+    """
+    To display words in each topic with desc. order
+    """
     for topic_idx, topic in enumerate(model.components_):
         print ("Topic %d:" % (topic_idx))
         print (" ".join([feature_names[i]
@@ -93,6 +94,9 @@ import nltk
 analyzer = zeyrek.MorphAnalyzer()
 
 def lemmatization(texts, allowed_postags=["Noun", 'Adj', 'Verb', 'Adv']):
+      """
+      turkish lemmatizer 
+      """
       texts_out = []
       text = texts.split(" ")
       for sent in text:
@@ -105,11 +109,10 @@ def lemmatization(texts, allowed_postags=["Noun", 'Adj', 'Verb', 'Adv']):
       return texts_out
 
 
-
 import pandas as pd
 
 #Sample 
-sample = "thetext " 
+sample = # thetext 
 sample_clean = clean_text(sample)
 sample_lem = stemmer_fun_stop(sample_clean,stopwords)
 #sample_all_clean = lemmatization(sample_lem, allowed_postags=['Noun', 'Adj', 'Verb', 'Adv'])
@@ -162,6 +165,6 @@ List = make_list(nmf, tfidf_feature_names, no_top_words, nmf.transform(test).arg
 rslt = []
 print(List)
 print(len(List))
-"""for index in range(len(List)):
+for index in range(len(List)):
   theresult = result(List[index][1], List[index][0])
-  rslt.append(theresult)"""
+  rslt.append(theresult)
