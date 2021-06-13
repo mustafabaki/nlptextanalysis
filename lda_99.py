@@ -29,6 +29,9 @@ def lemmatize_stemming(text):
 
 """Tokenize and lemmatize"""
 def preprocess(text):
+    """
+    Filters the words according to stopwords and their length.
+    """
     result=[]
     for token in gensim.utils.simple_preprocess(text) :
         if token not in stop_word_list and len(token) > 3:
@@ -48,6 +51,9 @@ docs = docs.map(lambda x: re.sub('[,\.!?();:$%&#"]', '', x))
 docs = docs.map(lambda x: x.lower())
 docs = docs.map(lambda x: x.strip())
 def token(values):
+    """
+    Tokenizing.
+    """
     filtered_words = [word for word in values.split() if word not in stop_word_list]
     
     not_stopword_doc = " ".join(filtered_words)
